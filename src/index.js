@@ -4,21 +4,22 @@ import './index.css';
 import Characters from './Characters';
 import NavBar from './components/NavBar'
 import * as serviceWorker from './serviceWorker';
-import styled from 'styled-components';
+import { createGlobalStyle } from 'styled-components';
 
-const Background = styled.div`
-position: absolute;
-height: 100%;
-width:100%;
-background-color:#E5E5E5;
+const GlobalStyle = createGlobalStyle`
+  body {
+    background-color:#E5E5E5;
+  }
 `
+
+
 
 ReactDOM.render(
   <React.StrictMode >
-    <Background>
-      <NavBar />
-      <Characters />
-    </Background>
+    <GlobalStyle />
+    <NavBar />
+    <Characters />
+
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -8,8 +8,12 @@ const SearchInputStyled = styled.input`
     height:2.5rem;
     border: none;
     align-self: center;
+    font-size:24px;
     &::placeholder{
         color:rgb(192,192,192);
+    }
+    &:focus, textarea:focus, select:focus{
+        outline: none;
     }
 `
 

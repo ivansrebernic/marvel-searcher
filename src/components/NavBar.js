@@ -5,8 +5,12 @@ import styled from 'styled-components'
 
 
 const NavBarStyled = styled.nav`
+    top:0;
+    position: sticky;
+    z-index: 2;
     display:flex;
     background-color:white;
+    box-shadow: 1px 1px 3px gray;
 
 `
 const NavBarBrand = styled.span`

@@ -1,5 +1,6 @@
 import React from 'react'
 import SearchInput from './SearchInput'
+import FavoriteButton from './FavoriteButton'
 import SearchIconPNG from '../assets/images/search.png'
 import styled from 'styled-components'
 
@@ -43,7 +44,7 @@ class SearchBox extends React.Component {
             <SearchBoxStyled>
                 <SearchIcon src={SearchIconPNG} />
                 <SearchInput >asd</SearchInput>
-
+                <FavoriteButton />
             </SearchBoxStyled>
 
         )
