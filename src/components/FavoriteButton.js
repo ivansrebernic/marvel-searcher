@@ -30,21 +30,19 @@ class FavoriteButton extends React.Component {
     }
 
 
-    toggleButton() {
+    toggleButton(e) {
+        e.stopPropagation()
         this.setState(state => ({
             isFavorite: !state.isFavorite
         }))
-        console.log("asd")
+
     }
 
     render() {
         return (
-            <FavoriteButtonStyled onClick={this.toggleButton} >
-                <img src={this.state.isFavorite ? FavIconToggled : FavIcon} />
+            <FavoriteButtonStyled className={this.props.className} onClick={this.toggleButton} >
+                <img src={this.state.isFavorite ? FavIconToggled : FavIcon} alt="favoritite button" />
             </FavoriteButtonStyled >
-
-
-
         )
     }
 }
