@@ -1,21 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import CharacterCard from './components/CharacterCard'
+import NavBar from './components/NavBar'
 
-const mockData = {
-  results: [
-    {
-      character: {
-        name: "SupahMen",
-        thumbnail: {
-          path: "../assets/images/",
-          extension: ".jpeg"
-        }
-
-      }
-    }
-  ]
-}
 //TS: 1
 //Private Key : 689e54de613203045cc2402b42581b8914fff973
 //Public Key : d267dc8180768e976a2442235e0617f6
@@ -36,12 +23,14 @@ const StyledCharacters = styled.div`
   grid-template-columns: repeat(auto-fill, 350px);
 `
 
+//The global state of the application, the query will be stored here for easier access from the parent container
 
 class Characters extends React.Component {
 
   constructor(props) {
     super(props)
     this.state = {
+      query: "",
       data: {
         results: [
           {
@@ -66,8 +55,8 @@ class Characters extends React.Component {
             }
           },
           {
-            id: 1,
-            name: "Super-man",
+            id: 2,
+            name: "Mujer maravilla",
             description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             thumbnail: {
               path: "/src/assets/images/portrait_xlarge",
@@ -87,8 +76,8 @@ class Characters extends React.Component {
             }
           },
           {
-            id: 1,
-            name: "Super-man",
+            id: 3,
+            name: "Linterna verde",
             description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             thumbnail: {
               path: "/src/assets/images/portrait_xlarge",
@@ -108,8 +97,8 @@ class Characters extends React.Component {
             }
           },
           {
-            id: 1,
-            name: "Super-man",
+            id: 4,
+            name: "Ant-man",
             description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             thumbnail: {
               path: "/src/assets/images/portrait_xlarge",
@@ -128,29 +117,55 @@ class Characters extends React.Component {
               ]
             }
           }
-        ]
+        ],
+
       },
-      isModalOpen: ''
+      filteredResults: [],
+      isModalOpen: false,
+      loading: false,
+      error: null
     }
 
     this.handleCloseModal = this.handleCloseModal.bind(this)
     this.handleOpenModal = this.handleOpenModal.bind(this)
+    this.setQuery = this.setQuery.bind(this)
   }
-
   componentDidMount() {
     //this.fetchData();
+    const data = {}
+
   }
   fetchData = async () => {
-    const response = await fetch("http://gateway.marvel.com/v1/public/characters?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e")
-    const { data } = await response.json();
-    this.setState({ data: data })
+
+    try {
+      const response = await fetch("http://gateway.marvel.com/v1/public/characters?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e")
+      const { data } = await response.json();
+      this.setState({ data: data })
+    } catch (error) {
+      this.setState({
+        loading: false,
+        error: error
+      })
+    }
   }
+  setQuery(value) {
+
+    this.setState({ query: value })
+
+    const filteredResults = this.state.data.results.filter(result => {
+      return result.name.toLowerCase().includes(value.toLowerCase())
+    })
+    console.log(filteredResults)
+    this.setState({ filteredResults })
+
+
+  }
+
   handleCloseModal(e) {
     e.stopPropagation()
     this.setState({ isModalOpen: false }, () => {
       console.log(this.state.isModalOpen)
     })
-
   }
   handleOpenModal(e) {
     e.stopPropagation()
@@ -159,18 +174,24 @@ class Characters extends React.Component {
         console.log(this.state.isModalOpen)
       })
     }
-
   }
+
   render() {
+
+
+
+
     return (
-      < StyledCharacters >
-        {
-          this.state.data.results.map(character => (
-            <CharacterCard key={character.id} character={character} modalIsOpen={this.state.isModalOpen} onOpenModal={this.handleOpenModal} onCloseModal={this.handleCloseModal}>
-            </CharacterCard>
-          ))
-        }
-      </StyledCharacters>
+      <div>
+        <NavBar handleQuery={this.setQuery} />
+        < StyledCharacters >
+          {this.state.filteredResults.map(character => (
+            <CharacterCard key={character.id} character={character} modalIsOpen={this.state.isModalOpen} onOpenModal={this.handleOpenModal} onCloseModal={this.handleCloseModal} />
+          ))}
+        </StyledCharacters>
+      </div>
+
+
     )
   }
 

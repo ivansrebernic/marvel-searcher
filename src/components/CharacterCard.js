@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Thumbnail from '../assets/images/portrait_xlarge.jpg'
 import FavoriteButton from './FavoriteButton'
 import Modal from './Modal'
-const imageSize = "portrait_xlarge"
+//const imageSize = "portrait_xlarge"
 
 
 //background-image: url("${props => props.character.thumbnail.path}/${imageSize}.${props => props.character.thumbnail.extension}");
@@ -34,7 +34,6 @@ const FavoriteButtonStyled = styled(FavoriteButton)`
     margin-top: 1rem;
 
 `
-console.log(FavoriteButtonStyled)
 
 class CharacterCard extends React.Component {
 

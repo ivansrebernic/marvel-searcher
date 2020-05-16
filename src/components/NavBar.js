@@ -29,7 +29,7 @@ function NavBar(props) {
     return (
         <NavBarStyled>
             <NavBarBrand />
-            <SearchBox></SearchBox>
+            <SearchBox handleQuery={props.handleQuery}></SearchBox>
         </NavBarStyled>
     )
 }

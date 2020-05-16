@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import Characters from './Characters';
-import NavBar from './components/NavBar'
+
 import * as serviceWorker from './serviceWorker';
 import { createGlobalStyle } from 'styled-components';
 
@@ -17,7 +17,6 @@ const GlobalStyle = createGlobalStyle`
 ReactDOM.render(
   <React.StrictMode >
     <GlobalStyle />
-    <NavBar />
     <Characters />
 
   </React.StrictMode>,

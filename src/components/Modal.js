@@ -12,6 +12,7 @@ const ModalStyled = styled.div`
     background-color:rgb(0,0,0,0.5);
     width:100%;
     height:100%;
+
 `
 const ModalCharacterInfo = styled.div`
 
@@ -19,7 +20,7 @@ const ModalCharacterInfo = styled.div`
     top: 50%;
     left: 50%;
     width:100%;
-    max-width:500px;
+    max-width:600px;
     padding-bottom: 1rem;
     transform: translate(-50%, -50%);
     border-radius: 1%;
@@ -80,7 +81,7 @@ function Modal(props) {
                 <CloseButton onClick={props.onClose}>X</CloseButton>
                 <div>
                     <h3>{props.character.name}</h3>
-                    <img src={require('../assets/images/portrait_xlarge.jpg')}></img>
+                    <img src={require('../assets/images/portrait_xlarge.jpg')} alt="Super hero"></img>
                     <p>{props.character.description}</p>
                     <label htmlFor={ComicList}> <i> Comics in which {props.character.name} starred:</i></label>
                     <ComicList comicList={props.character.comics.items}></ComicList>

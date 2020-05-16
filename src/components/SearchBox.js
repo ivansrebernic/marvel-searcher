@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 
 
-const SearchBoxStyled = styled.div`
+const SearchBoxStyled = styled.form`
     display:flex !important;
     justify-content: between;
 
@@ -28,28 +28,23 @@ const SearchIcon = styled.img`
     margin-right:5px;
     width:24px;
     height:24px;
-
-
-
-
 `
 
-class SearchBox extends React.Component {
+function SearchBox(props) {
+
 
 
     //Rember to attribute Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
-    render() {
-        return (
 
-            <SearchBoxStyled>
-                <SearchIcon src={SearchIconPNG} />
-                <SearchInput >asd</SearchInput>
-                <FavoriteButton />
-            </SearchBoxStyled>
-
-        )
-    }
+    return (
+        <SearchBoxStyled onSubmit={e => e.preventDefault()}>
+            <SearchIcon src={SearchIconPNG} />
+            <SearchInput handleQuery={props.handleQuery}></SearchInput>
+            <FavoriteButton />
+        </SearchBoxStyled>
+    )
 }
+
 
 
 export default SearchBox

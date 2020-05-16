@@ -17,15 +17,18 @@ const SearchInputStyled = styled.input`
     }
 `
 
-class SearchInput extends React.Component {
 
 
 
-    render() {
-        return (
-            <SearchInputStyled placeholder="Search" />
-        )
-    }
+function SearchInput(props) {
+
+
+
+
+    return (
+        <SearchInputStyled onChange={e => props.handleQuery(e.target.value)} placeholder="Search" />
+    )
+
 
 }
 
