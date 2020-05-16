@@ -23,6 +23,20 @@ const mockData = {
 /* EXAMPLE
 /* http://gateway.marvel.com/v1/public/comics?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e */
 
+
+const StyledCharacters = styled.div`
+  background-color: #E5E5E5;
+
+  margin-top:4rem;
+  margin-left:4rem;
+  margin-right:4rem;
+  display: grid;
+  justify-content: center;
+  grid-gap: 1rem 1rem;
+  grid-template-columns: repeat(auto-fill, 350px);
+`
+
+
 class Characters extends React.Component {
 
   constructor(props) {
@@ -33,11 +47,88 @@ class Characters extends React.Component {
           {
             id: 1,
             name: "Super-man",
+            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             thumbnail: {
               path: "/src/assets/images/portrait_xlarge",
               extension: "jpg"
+            },
+            comics: {
+              items: [
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" },
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" }
+              ]
             }
-          }]
+          },
+          {
+            id: 1,
+            name: "Super-man",
+            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            thumbnail: {
+              path: "/src/assets/images/portrait_xlarge",
+              extension: "jpg"
+            },
+            comics: {
+              items: [
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" },
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" }
+              ]
+            }
+          },
+          {
+            id: 1,
+            name: "Super-man",
+            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            thumbnail: {
+              path: "/src/assets/images/portrait_xlarge",
+              extension: "jpg"
+            },
+            comics: {
+              items: [
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" },
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" }
+              ]
+            }
+          },
+          {
+            id: 1,
+            name: "Super-man",
+            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            thumbnail: {
+              path: "/src/assets/images/portrait_xlarge",
+              extension: "jpg"
+            },
+            comics: {
+              items: [
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" },
+                { name: "Superman return" },
+                { name: "Superman returns again" },
+                { name: "Superman reborns" },
+                { name: "Superman redies" }
+              ]
+            }
+          }
+        ]
       },
       isModalOpen: ''
     }
@@ -84,20 +175,6 @@ class Characters extends React.Component {
   }
 
 }
-
-const StyledCharacters = styled.div`
-  background-color: #E5E5E5;
-
-  margin-top:4rem;
-  margin-left:4rem;
-  margin-right:4rem;
-  display: grid;
-  justify-content: center;
-  grid-gap: 1rem 1rem;
-  grid-template-columns: repeat(auto-fill, 350px);
-
-
-`
 
 
 

@@ -1,24 +1,62 @@
 import React from 'react'
+import ComicList from './ComicList'
 import styled from 'styled-components'
 import ReactDOM from 'react-dom'
 
 
 const ModalStyled = styled.div`
-    position: absolute;
-    display:flex;
-    border-radius: 2%;
-    justify-content: flex-end;
-    left: 50%;
+    z-index:3;
+    position: fixed;
+    top:0;
+    left:0;
+    background-color:rgb(0,0,0,0.5);
+    width:100%;
+    height:100%;
+`
+const ModalCharacterInfo = styled.div`
+
+    position: fixed ;
     top: 50%;
+    left: 50%;
+    width:100%;
+    max-width:500px;
+    padding-bottom: 1rem;
     transform: translate(-50%, -50%);
-    width 80%;
-    height:80%;
-    background-color:lightgray;
-    box-shadow: 2px 2px 2px gray;
+    border-radius: 1%;
+    background-color:white;
+    display:flex;
+    flex-direction:column;
+
+    div{
+        display:flex;
+        align-items:center;
+        flex-direction: column;
+        justify-content: center;
+        img{
+            width:100%;
+            max-width:20rem;
+        }
+        p {
+            width: 300px;
+            word-break: break-all;
+       }
+        h3 {
+            margin-top:0;
+            margin-bottom:1rem
+        }
+        label {
+
+
+        }
+    }
+
+
+
 `
 const CloseButton = styled.span`
-    font-size: 24px;
-    margin: 1rem;
+    align-self:flex-end;
+    font-size: 18px;
+    margin: 0.5rem;
     height: 2rem;
     width: 2rem;
     text-align: center;
@@ -26,8 +64,8 @@ const CloseButton = styled.span`
         cursor:pointer;
     }
 
-
 `
+
 
 function Modal(props) {
     if (!props.isOpen) {
@@ -37,7 +75,18 @@ function Modal(props) {
     return ReactDOM.createPortal(
 
         <ModalStyled >
-            <CloseButton onClick={props.onClose}>X</CloseButton>
+
+            <ModalCharacterInfo>
+                <CloseButton onClick={props.onClose}>X</CloseButton>
+                <div>
+                    <h3>{props.character.name}</h3>
+                    <img src={require('../assets/images/portrait_xlarge.jpg')}></img>
+                    <p>{props.character.description}</p>
+                    <label htmlFor={ComicList}> <i> Comics in which {props.character.name} starred:</i></label>
+                    <ComicList comicList={props.character.comics.items}></ComicList>
+                </div>
+
+            </ModalCharacterInfo>
         </ModalStyled >, document.getElementById('modal')
     )
 }

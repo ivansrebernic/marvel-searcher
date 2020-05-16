@@ -49,12 +49,11 @@ class CharacterCard extends React.Component {
         return (
 
             <CharacterCardStyled character={this.props.character} onClick={this.props.onOpenModal}>
-
                 <FavoriteButtonStyled />
                 <h2 >
                     {this.props.character.name}
                 </h2>
-                <Modal isOpen={this.props.modalIsOpen} onClose={this.props.onCloseModal}></Modal>
+                <Modal character={this.props.character} isOpen={this.props.modalIsOpen} onClose={this.props.onCloseModal}></Modal>
             </CharacterCardStyled >
 
         )
