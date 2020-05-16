@@ -45,7 +45,7 @@ class Characters extends React.Component {
 }
 
 const StyledCharacters = styled.div`
-
+  background-color: #E5E5E5;
   margin-left:5rem;
   margin-right:5rem;
   display: grid;
