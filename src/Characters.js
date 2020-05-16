@@ -126,6 +126,7 @@ class Characters extends React.Component {
       error: null
     }
 
+    this.state.filteredResults = this.state.data.results
     this.handleCloseModal = this.handleCloseModal.bind(this)
     this.handleOpenModal = this.handleOpenModal.bind(this)
     this.setQuery = this.setQuery.bind(this)
