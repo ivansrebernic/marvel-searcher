@@ -150,6 +150,7 @@ class Characters extends React.Component {
     }
   }
   setQuery(value) {
+    console.log(value)
     this.setState({ query: value })
     const filteredResults = this.state.data.results.filter(result => {
       return result.name.toLowerCase().includes(value.toLowerCase())

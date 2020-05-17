@@ -25,7 +25,6 @@ function FavoriteButton(props) {
 
     const toggleButton = (e) => {
         e.stopPropagation();
-
         props.isFavorite ? props.onUnfavorite() : props.onFavorite()
     }
 

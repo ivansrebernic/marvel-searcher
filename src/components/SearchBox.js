@@ -40,18 +40,15 @@ function SearchBox(props) {
     const addQueryToFavorites = () => {
         if (!favorites.includes(query)) {
             setFavorites([...favorites, query])
-            console.log(query + " added to favorites")
         }
     }
     const removeQueryFromFavorites = () => {
-        const index = favorites.indexOf(query)
         const newFavorites = favorites.filter(favorite => { return favorite != query })
         setFavorites(newFavorites)
-        console.log(query + " removeds to favorites")
     }
     const submitQuery = (e) => {
         e.preventDefault()
-        props.handleQuery(e.target.value)
+        props.handleQuery(query)
     }
 
     return (
