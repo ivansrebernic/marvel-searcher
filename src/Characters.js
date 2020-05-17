@@ -150,16 +150,12 @@ class Characters extends React.Component {
     }
   }
   setQuery(value) {
-
     this.setState({ query: value })
-
     const filteredResults = this.state.data.results.filter(result => {
       return result.name.toLowerCase().includes(value.toLowerCase())
     })
     console.log(filteredResults)
     this.setState({ filteredResults })
-
-
   }
 
   handleCloseModal(e) {
