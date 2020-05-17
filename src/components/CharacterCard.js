@@ -37,13 +37,6 @@ const FavoriteButtonStyled = styled(FavoriteButton)`
 
 class CharacterCard extends React.Component {
 
-    constructor({ character, props }) {
-        super(props)
-
-    }
-    state = {
-
-    }
     render() {
         return (
 

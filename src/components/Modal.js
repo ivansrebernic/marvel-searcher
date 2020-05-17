@@ -83,7 +83,7 @@ function Modal(props) {
                     <h3>{props.character.name}</h3>
                     <img src={require('../assets/images/portrait_xlarge.jpg')} alt="Super hero"></img>
                     <p>{props.character.description}</p>
-                    <label htmlFor={ComicList}> <i> Comics in which {props.character.name} starred:</i></label>
+                    <i> Comics in which {props.character.name} starred:</i>
                     <ComicList comicList={props.character.comics.items}></ComicList>
                 </div>
 

@@ -4,6 +4,7 @@ import styled from 'styled-components'
 
 
 const SearchInputStyled = styled.input`
+
     width:100%;
     height:2.5rem;
     border: none;
@@ -13,7 +14,7 @@ const SearchInputStyled = styled.input`
         color:rgb(192,192,192);
     }
     &:focus, textarea:focus, select:focus{
-        outline: none;
+
     }
 `
 
@@ -23,10 +24,8 @@ const SearchInputStyled = styled.input`
 function SearchInput(props) {
 
 
-
-
     return (
-        <SearchInputStyled onChange={e => props.handleQuery(e.target.value)} placeholder="Search" />
+        <SearchInputStyled type="text" value={props.children} onFocus={props.handleFocus} onBlur={props.handleFocus} onChange={props.handleQuery} placeholder="Search" />
     )
 
 

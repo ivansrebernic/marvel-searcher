@@ -30,7 +30,7 @@ function ComicList(props) {
         <ComicListStyled>
             {
                 props.comicList.map(comic => (
-                    <ComicItem>
+                    <ComicItem key={comic.name}>
                         <span>{comic.name}</span>
                         <span>[Fecha]</span>
                     </ComicItem>

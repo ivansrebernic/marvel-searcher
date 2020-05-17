@@ -47,10 +47,7 @@ class Characters extends React.Component {
                 { name: "Superman returns again" },
                 { name: "Superman reborns" },
                 { name: "Superman redies" },
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" }
+
               ]
             }
           },
@@ -68,10 +65,7 @@ class Characters extends React.Component {
                 { name: "Superman returns again" },
                 { name: "Superman reborns" },
                 { name: "Superman redies" },
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" }
+
               ]
             }
           },
@@ -89,10 +83,7 @@ class Characters extends React.Component {
                 { name: "Superman returns again" },
                 { name: "Superman reborns" },
                 { name: "Superman redies" },
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" }
+
               ]
             }
           },
@@ -110,10 +101,7 @@ class Characters extends React.Component {
                 { name: "Superman returns again" },
                 { name: "Superman reborns" },
                 { name: "Superman redies" },
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" }
+
               ]
             }
           }
@@ -150,27 +138,23 @@ class Characters extends React.Component {
     }
   }
   setQuery(value) {
-    console.log(value)
+
     this.setState({ query: value })
     const filteredResults = this.state.data.results.filter(result => {
       return result.name.toLowerCase().includes(value.toLowerCase())
     })
-    console.log(filteredResults)
+
     this.setState({ filteredResults })
   }
 
   handleCloseModal(e) {
     e.stopPropagation()
-    this.setState({ isModalOpen: false }, () => {
-      console.log(this.state.isModalOpen)
-    })
+    this.setState({ isModalOpen: false })
   }
   handleOpenModal(e) {
     e.stopPropagation()
     if (!this.state.isModalOpen) {
-      this.setState({ isModalOpen: true }, () => {
-        console.log(this.state.isModalOpen)
-      })
+      this.setState({ isModalOpen: true })
     }
   }
 
