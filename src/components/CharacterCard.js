@@ -35,21 +35,30 @@ const FavoriteButtonStyled = styled(FavoriteButton)`
 
 `
 
-class CharacterCard extends React.Component {
+function CharacterCard(props) {
 
-    render() {
-        return (
+    const [favorite, setFavorite] = React.useState(false);
 
-            <CharacterCardStyled character={this.props.character} onClick={this.props.onOpenModal}>
-                <FavoriteButtonStyled />
-                <h2 >
-                    {this.props.character.name}
-                </h2>
-                <Modal character={this.props.character} isOpen={this.props.modalIsOpen} onClose={this.props.onCloseModal}></Modal>
-            </CharacterCardStyled >
 
-        )
+    const handleFavorite = () => {
+        setFavorite(true)
     }
+    const handleUnfavorite = () => {
+        setFavorite(false)
+    }
+
+    return (
+
+        <CharacterCardStyled character={props.character} onClick={props.onOpenModal}>
+            <FavoriteButtonStyled isFavorite={favorite} onFavorite={handleFavorite} onUnfavorite={handleUnfavorite} />
+            <h2 >
+                {props.character.name}
+            </h2>
+            <Modal character={props.character} isOpen={props.modalIsOpen} onClose={props.onCloseModal}></Modal>
+        </CharacterCardStyled >
+
+    )
+
 
 
 }
