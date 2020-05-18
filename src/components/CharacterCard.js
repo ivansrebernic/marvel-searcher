@@ -20,7 +20,12 @@ const CharacterCardStyled = styled.div`
     justify-content: space-between;
     height:30rem;
     transition: 0.3s ease-in;
-    h2{
+    h1{
+
+        color: black;
+        -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+        -webkit-text-stroke-width: 1px;
+        -webkit-text-stroke-color: black;
         color:white;
         margin: 1rem;
         display:block;
@@ -54,9 +59,9 @@ function CharacterCard(props) {
 
         <CharacterCardStyled character={props.character} onClick={(e) => props.onOpenModal(e, props.character)}>
             <FavoriteButtonStyled isFavorite={favorite} onFavorite={handleFavorite} onUnfavorite={handleUnfavorite} />
-            <h2 >
+            <h1 >
                 {props.character.name}
-            </h2>
+            </h1>
 
         </CharacterCardStyled >
 

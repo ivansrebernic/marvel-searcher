@@ -18,11 +18,11 @@ const Dot = styled.div`
   animation-delay: ${props => props.delay};
 `;
 const DotWrapper = styled.div`
-    position:absolute ;
-    top:50%;
-    left:50%;
+    justify-content:center;
+    
+    height:5rem;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
 `;
 function Loader() {
 

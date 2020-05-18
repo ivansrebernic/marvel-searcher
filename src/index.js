@@ -23,7 +23,6 @@ ReactDOM.render(
   <React.StrictMode >
     <GlobalStyle />
     <Router>
-
     </Router>
   </React.StrictMode>,
 

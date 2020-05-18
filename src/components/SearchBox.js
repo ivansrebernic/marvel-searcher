@@ -71,9 +71,7 @@ function SearchBox(props) {
     }
 
     const collapseFavoritesList = () => {
-        console.log("me voy")
         setCollapsed(true);
-        const favoritesList = ""
     }
     const handleCollapse = () => {
         setCollapsed(false)
