@@ -9,11 +9,11 @@ const FavoriteItemStyled = styled.li`
     justify-content:space-between;
     align-items:center;
     height:2rem;
-    border-radius:10px;
-    transition: 0.1s ease-in;
+
+
     &:hover{
         cursor:pointer;
-        background-color:lightgrey;
+        background-color:#E5E5E5;
     }
 `
 function FavoriteItem(props) {

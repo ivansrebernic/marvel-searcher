@@ -104,10 +104,12 @@ class Characters extends React.Component {
       this.setState({
         fetching: false
       })
+
+      this.setState((state, props) => ({ page: state.page++ }))
       this.setState((state, props) => ({
         results: [...state.results, ...data.results]
       }))
-      this.setState((state, props) => ({ page: state.page + 1 }))
+
 
       if (data.offset > data.total - data.count)
         this.setState({ noMoreResults: true })
@@ -120,23 +122,54 @@ class Characters extends React.Component {
       })
     }
   }
+  getUnique(arr, comp) {
+
+    // store the comparison  values in array
+    const unique = arr.map(e => e[comp])
+
+      // store the indexes of the unique objects
+      .map((e, i, final) => final.indexOf(e) === i && i)
+
+      // eliminate the false indexes & return unique objects
+      .filter((e) => arr[e]).map(e => arr[e]);
+
+    return unique;
+  }
+
+  getCharacters(comics) {
+
+    let characters = []
+    comics.results.forEach(comic => {
+      if (comic.characters.items.length > 0)
+        comic.characters.items.forEach(character => {
+          characters = [...characters, character]
+        })
+
+    })
+    characters = this.getUnique(characters, 'name')
+    return characters
+  }
   fetchData = async (value) => {
     try {
       this.setState({ loading: true })
-      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?${value ? 'nameStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
-      const { data } = await response.json();
-
-
+      console.log(value)
+      let responseCharacters = await fetch(`http://gateway.marvel.com/v1/public/characters?${value ? 'nameStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
+      const { data: characters } = await responseCharacters.json()
+      console.log(characters)
+      let responseComics
+      if (value !== '') {
+        responseComics = await fetch(`http://gateway.marvel.com/v1/public/comics?${value ? 'titleStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
+      }
+      const data = [...characters.results]
       this.setState({
         loading: false
       })
-
-      this.setState({ page: 2 })
+      this.setState((state, props) => ({ page: state.page + 1 }))
       this.setState({ fetching: false })
       this.setState({ noMoreResults: false })
       if (data) {
         this.setState((state, props) => ({
-          results: [...data.results]
+          results: data
         }))
       }
 

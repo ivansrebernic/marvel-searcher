@@ -9,7 +9,7 @@ const FavoritesListStyled = styled.ul`
     top:100%;
     margin:0;
     padding:0;
-    border-radius: 0 0 20px 20px;
+    border-radius: 0 0 5px 5px;
     @media (max-width: 768px) {
         left:0;
         width:100%;
