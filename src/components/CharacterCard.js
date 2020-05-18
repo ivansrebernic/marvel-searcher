@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import Thumbnail from '../assets/images/portrait_xlarge.jpg'
 import FavoriteButton from './FavoriteButton'
-import Modal from './Modal'
 import ModalCharacterInfo from './ModalCharacterInfo'
 //const imageSize = "portrait_xlarge"
 
