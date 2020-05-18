@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import Thumbnail from '../assets/images/portrait_xlarge.jpg'
 import FavoriteButton from './FavoriteButton'
 import Modal from './Modal'
+import ModalCharacterInfo from './ModalCharacterInfo'
 //const imageSize = "portrait_xlarge"
 
 
@@ -54,7 +55,7 @@ function CharacterCard(props) {
             <h2 >
                 {props.character.name}
             </h2>
-            <Modal character={props.character} isOpen={props.modalIsOpen} onClose={props.onCloseModal}></Modal>
+            <ModalCharacterInfo character={props.character} isOpen={props.modalIsOpen} onClose={props.onCloseModal}></ModalCharacterInfo>
         </CharacterCardStyled >
 
     )

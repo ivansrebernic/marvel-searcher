@@ -5,20 +5,17 @@ const ComicListStyled = styled.ul`
     background-color:#F7F8FA;
     margin:0;
     padding:0;
-    max-width:300px;
+    max-width:500px;
     height:100px;
     width:100%;
     overflow:scroll;
     list-style-type:none;
+    overflow-x:hidden;
 `
 const ComicItem = styled.li`
     display:flex;
     justify-content:space-between;
     border-bottom: 1px solid grey;
-
-    margin:3px;
-    padding:5px;
-
 `
 
 

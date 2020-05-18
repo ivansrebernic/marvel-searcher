@@ -10,6 +10,10 @@ const FavoritesListStyled = styled.ul`
     margin:0;
     padding:0;
     border-radius: 0 0 20px 20px;
+    @media (max-width: 768px) {
+        left:0;
+        width:100%;
+      }
 `
 
 

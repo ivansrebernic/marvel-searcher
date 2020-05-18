@@ -18,12 +18,6 @@ const FavoriteItemStyled = styled.li`
 `
 function FavoriteItem(props) {
 
-    const handleClick = () => {
-        console.log(props.children)
-        console.log(props)
-
-    }
-
     return (
         <FavoriteItemStyled onClick={props.returnQuery}>
             {props.children}

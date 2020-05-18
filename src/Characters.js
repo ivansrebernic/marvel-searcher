@@ -121,7 +121,6 @@ class Characters extends React.Component {
   }
   componentDidMount() {
     //this.fetchData();
-    const data = {}
 
   }
   fetchData = async () => {
