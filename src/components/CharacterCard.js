@@ -3,16 +3,19 @@ import styled from 'styled-components'
 import Thumbnail from '../assets/images/portrait_xlarge.jpg'
 import FavoriteButton from './FavoriteButton'
 import ModalCharacterInfo from './ModalCharacterInfo'
-//const imageSize = "portrait_xlarge"
+
+//The size of the thumbnails that is going to be requested
+//TO DO: Comment other variants
+const imageSize = "portrait_xlarge"
 
 
-//background-image: url("${props => props.character.thumbnail.path}/${imageSize}.${props => props.character.thumbnail.extension}");
+
 const CharacterCardStyled = styled.div`
 
     display:inline-flex;
     flex-direction: column;
     background-color:gray;
-    background-image: url(${Thumbnail})
+    background-image: url("${props => props.character.thumbnail.path}/${imageSize}.${props => props.character.thumbnail.extension}");
     background-size:cover;
     justify-content: space-between;
     height:30rem;
@@ -49,12 +52,12 @@ function CharacterCard(props) {
 
     return (
 
-        <CharacterCardStyled character={props.character} onClick={props.onOpenModal}>
+        <CharacterCardStyled character={props.character} onClick={(e) => props.onOpenModal(e, props.character)}>
             <FavoriteButtonStyled isFavorite={favorite} onFavorite={handleFavorite} onUnfavorite={handleUnfavorite} />
             <h2 >
                 {props.character.name}
             </h2>
-            <ModalCharacterInfo character={props.character} isOpen={props.modalIsOpen} onClose={props.onCloseModal}></ModalCharacterInfo>
+
         </CharacterCardStyled >
 
     )

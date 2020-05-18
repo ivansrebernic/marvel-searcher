@@ -1,7 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
+import ModalCharacterInfo from './components/ModalCharacterInfo'
 import CharacterCard from './components/CharacterCard'
 import NavBar from './components/NavBar'
+
 
 //TS: 1
 //Private Key : 689e54de613203045cc2402b42581b8914fff973
@@ -31,81 +33,9 @@ class Characters extends React.Component {
     super(props)
     this.state = {
       query: "",
+      character: '',
       data: {
-        results: [
-          {
-            id: 1,
-            name: "Super-man",
-            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            thumbnail: {
-              path: "/src/assets/images/portrait_xlarge",
-              extension: "jpg"
-            },
-            comics: {
-              items: [
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" },
-
-              ]
-            }
-          },
-          {
-            id: 2,
-            name: "Mujer maravilla",
-            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            thumbnail: {
-              path: "/src/assets/images/portrait_xlarge",
-              extension: "jpg"
-            },
-            comics: {
-              items: [
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" },
-
-              ]
-            }
-          },
-          {
-            id: 3,
-            name: "Linterna verde",
-            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            thumbnail: {
-              path: "/src/assets/images/portrait_xlarge",
-              extension: "jpg"
-            },
-            comics: {
-              items: [
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" },
-
-              ]
-            }
-          },
-          {
-            id: 4,
-            name: "Ant-man",
-            description: "The best of them all supah heroes lorem20aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-            thumbnail: {
-              path: "/src/assets/images/portrait_xlarge",
-              extension: "jpg"
-            },
-            comics: {
-              items: [
-                { name: "Superman return" },
-                { name: "Superman returns again" },
-                { name: "Superman reborns" },
-                { name: "Superman redies" },
-
-              ]
-            }
-          }
-        ],
+        results: [],
 
       },
       filteredResults: [],
@@ -120,15 +50,17 @@ class Characters extends React.Component {
     this.setQuery = this.setQuery.bind(this)
   }
   componentDidMount() {
-    //this.fetchData();
+    this.fetchData();
 
   }
   fetchData = async () => {
 
     try {
-      const response = await fetch("http://gateway.marvel.com/v1/public/characters?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e")
+      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
+
       const { data } = await response.json();
       this.setState({ data: data })
+      this.setState({ filteredResults: data.results })
     } catch (error) {
       this.setState({
         loading: false,
@@ -149,26 +81,25 @@ class Characters extends React.Component {
   handleCloseModal(e) {
     e.stopPropagation()
     this.setState({ isModalOpen: false })
+    this.setState({ character: null })
+    console.log(this.state.isModalOpen)
   }
-  handleOpenModal(e) {
+  handleOpenModal(e, character) {
     e.stopPropagation()
     if (!this.state.isModalOpen) {
+      this.setState({ character: character })
       this.setState({ isModalOpen: true })
     }
   }
-
   render() {
-
-
-
-
     return (
       <div>
         <NavBar handleQuery={this.setQuery} />
         < StyledCharacters >
           {this.state.filteredResults.map(character => (
-            <CharacterCard key={character.id} character={character} modalIsOpen={this.state.isModalOpen} onOpenModal={this.handleOpenModal} onCloseModal={this.handleCloseModal} />
+            <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
+          <ModalCharacterInfo character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
         </StyledCharacters>
       </div>
 

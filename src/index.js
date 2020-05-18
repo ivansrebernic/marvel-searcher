@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
 import Router from './components/Routes'
 import * as serviceWorker from './serviceWorker';
 import { createGlobalStyle } from 'styled-components';
