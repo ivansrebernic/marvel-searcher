@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import Loader from './components/Loader'
 import ModalCharacterInfo from './components/ModalCharacterInfo'
 import CharacterCard from './components/CharacterCard'
 import NavBar from './components/NavBar'
@@ -56,14 +57,21 @@ class Characters extends React.Component {
   fetchData = async () => {
 
     try {
+      this.setState({ loading: true })
       const response = await fetch(`http://gateway.marvel.com/v1/public/characters?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
-
       const { data } = await response.json();
-      this.setState({ data: data })
-      this.setState({ filteredResults: data.results })
+      this.setState({
+        loading: false
+      })
+      this.setState({
+        data: data
+      })
     } catch (error) {
+
       this.setState({
         loading: false,
+      })
+      this.setState({
         error: error
       })
     }
@@ -95,12 +103,15 @@ class Characters extends React.Component {
     return (
       <div>
         <NavBar handleQuery={this.setQuery} />
-        < StyledCharacters >
-          {this.state.filteredResults.map(character => (
+
+        {this.state.loading && <Loader />}
+        {!this.state.loading && < StyledCharacters >
+          {this.state.data.results.map(character => (
             <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
           <ModalCharacterInfo character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
-        </StyledCharacters>
+        </StyledCharacters>}
+
       </div>
 
 
