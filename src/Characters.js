@@ -6,6 +6,7 @@ import CharacterCard from './components/CharacterCard'
 import NavBar from './components/NavBar'
 
 
+
 //TS: 1
 //Private Key : 689e54de613203045cc2402b42581b8914fff973
 //Public Key : d267dc8180768e976a2442235e0617f6
@@ -67,6 +68,7 @@ class Characters extends React.Component {
   }
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
+
   }
   fetchRandom = async () => {
     try {
@@ -152,14 +154,20 @@ class Characters extends React.Component {
   fetchData = async (value) => {
     try {
       this.setState({ loading: true })
-      console.log(value)
+
       let responseCharacters = await fetch(`http://gateway.marvel.com/v1/public/characters?${value ? 'nameStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
       const { data: characters } = await responseCharacters.json()
-      console.log(characters)
+
       let responseComics
+      let comics
       if (value !== '') {
         responseComics = await fetch(`http://gateway.marvel.com/v1/public/comics?${value ? 'titleStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
+        comics = await responseComics.json()
       }
+
+      let results = comics.data.results
+      console.log(results)
+
       const data = [...characters.results]
       this.setState({
         loading: false
