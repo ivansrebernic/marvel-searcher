@@ -42,6 +42,7 @@ function SearchBox(props) {
     const [collapsed, setCollapsed] = React.useState('')
 
 
+
     //Rember to attribute Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
     const addQueryToFavorites = () => {
         if (query !== "" && !favorites.includes(query)) {
@@ -70,24 +71,33 @@ function SearchBox(props) {
     }
 
     const collapseFavoritesList = () => {
-
+        console.log("me voy")
+        setCollapsed(true);
+        const favoritesList = ""
     }
-
+    const handleCollapse = () => {
+        setCollapsed(false)
+    }
+    const favoritesList = (
+        <FavoritesList >
+            {
+                favorites.map(query => (
+                    <FavoritesListItem key={query} returnQuery={handleQueryList}>{query}</FavoritesListItem>
+                ))
+            }
+        </FavoritesList>)
     return (
-        <SearchBoxStyled tabIndex="0" onBlur={collapseFavoritesList} onSubmit={e => submitQuery(e)} >
+        <SearchBoxStyled onFocus={handleCollapse} onBlur={collapseFavoritesList} tabIndex="0" onSubmit={e => submitQuery(e)} >
             <SearchIcon src={SearchIconPNG} />
             <SearchInput handleQuery={handleQueryInput} >{query}</SearchInput>
-            <FavoritesList >
-                {
-                    favorites.map(query => (
-                        <FavoritesListItem key={query} returnQuery={handleQueryList}>{query}</FavoritesListItem>
-                    ))
-                }
+            {!collapsed && favoritesList}
 
-            </FavoritesList>
             <FavoriteButton isFavorite={favorites.includes(query)} onFavorite={addQueryToFavorites} onUnfavorite={removeQueryFromFavorites} />
         </SearchBoxStyled >
     )
+
+
+
 }
 
 
