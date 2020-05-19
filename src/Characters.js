@@ -28,7 +28,7 @@ const StyledCharacters = styled.div`
 `
 
 //The global state of the application, the query will be stored here for easier access from the parent container
-
+const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e"
 class Characters extends React.Component {
 
   constructor(props) {
@@ -51,6 +51,7 @@ class Characters extends React.Component {
     this.handleOpenModal = this.handleOpenModal.bind(this)
     this.setQuery = this.setQuery.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+    this.fetchCharactersFromComicContainer = this.fetchCharactersFromComicContainer.bind(this)
   }
   handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
@@ -78,7 +79,7 @@ class Characters extends React.Component {
       const randomPage = () => {
         return Math.floor(Math.random() * 50)
       }
-      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e&offset=${randomPage()}`)
+      const response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
       const { data } = await response.json();
       //Elegimos aleatoriamente un personaje de todos los de la pagina
       const randomCharacter = () => {
@@ -100,13 +101,13 @@ class Characters extends React.Component {
 
   fetchMoreData = async () => {
     try {
-      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?${this.state.query ? 'nameStartsWith=' + this.state.query : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e&offset=${20 * this.state.page}`
+      const response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${this.state.query ? '&nameStartsWith=' + this.state.query : ''}&offset=${20 * this.state.page}`
         , {
           headers: { 'if-none-match': this.state.digest }
         })
 
       const characters = await response.json();
-      console.log(this.state.digest)
+
 
       this.setState({
         fetching: false
@@ -129,17 +130,14 @@ class Characters extends React.Component {
     }
   }
   getUnique(arr, comp) {
-
     // store the comparison  values in array
     const unique = arr.map(e => e[comp])
       // store the indexes of the unique objects
       .map((e, i, final) => final.indexOf(e) === i && i)
       // eliminate the false indexes & return unique objects
       .filter((e) => arr[e]).map(e => arr[e]);
-
     return unique;
   }
-
   getCharacters(comics) {
     let characters = []
     comics.results.forEach(comic => {
@@ -151,46 +149,104 @@ class Characters extends React.Component {
     characters = this.getUnique(characters, 'name')
     return characters
   }
+  fetchCharacters = async (value) => {
 
+    try {
+      let response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${value ? '&nameStartsWith=' + value : ''}`)
+      const { data } = await response.json()
+      return data.results
+    } catch (err) {
+      console.error(err)
+    }
+
+  }
+  fetchCharactersFromComics = async (value) => {
+
+    try {
+      let totalCharacters = []
+      let response = await fetch(`http://gateway.marvel.com/v1/public/comics${credentials}${value ? '&titleStartsWith=' + value : ''}`)
+      const { data } = await response.json()
+      console.log(data)
+      data.results.forEach((comic) => {
+        comic.characters.items.forEach((character) => {
+          //If there are characters in the list
+          if (totalCharacters.length !== 0) {
+            let flag = false;
+            //Check if the new extracted character already exists in characters list
+            totalCharacters.forEach((characterInList) => {
+              if (characterInList.name !== character.name) {
+                return
+              } else {
+                flag = true;
+              }
+            }
+            )
+            if (!flag) {
+              totalCharacters.push(character)
+            }
+          } else {
+            totalCharacters.push(character)
+          }
+        })
+      })
+      /*
+      let characters = []
+      totalCharacters.forEach(async (character) => {
+        const result = await this.fetchCharacter(character.resourceURI)
+      })
+      */
+      return totalCharacters
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  fetchCharactersFromComicContainer = (charactersFromComicContainer) => {
+
+    let promises = []
+    charactersFromComicContainer.forEach((characterInComic) => {
+      const promise = fetch(characterInComic.resourceURI + credentials).then(response => { return response.json() })
+      promises.push(promise)
+    })
+    return promises
+
+  }
   fetchData = async (value) => {
+
+    let characters;
+    let charactersFromComic
+    let charactersPromises
+    let newCharacters
     try {
       this.setState({ loading: true })
-
-      let responseCharacters = await fetch(`http://gateway.marvel.com/v1/public/characters?${value ? 'nameStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
-<<<<<<< HEAD
-      const characters = await responseCharacters.json()
-=======
-      const { data: characters } = await responseCharacters.json()
-
->>>>>>> 6f757b639f2c4936b39b6fc2ffecaca15dc4d7d8
-      let responseComics
-      let comics
+      characters = await this.fetchCharacters(value)
       if (value !== '') {
-        responseComics = await fetch(`http://gateway.marvel.com/v1/public/comics?${value ? 'titleStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
-        comics = await responseComics.json()
+        charactersFromComic = await this.fetchCharactersFromComics(value);
+        charactersPromises = await this.fetchCharactersFromComicContainer(charactersFromComic)
+        newCharacters = await Promise.all(charactersPromises)
+        console.log(newCharacters)
+        newCharacters.forEach(({ data }) => {
+          if (!characters.includes(data.results[0])) {
+            characters.push(data.results[0])
+          }
+        })
+
       }
-<<<<<<< HEAD
+
+
+      this.setState((state, props) => ({
+        results: [...characters]
+      }))
       this.setState({ digest: characters.etag })
-      const data = [...characters.data.results]
 
-=======
 
-      let results = comics.data.results
-      console.log(results)
-
-      const data = [...characters.results]
->>>>>>> 6f757b639f2c4936b39b6fc2ffecaca15dc4d7d8
       this.setState({
         loading: false
       })
       this.setState((state, props) => ({ page: state.page + 1 }))
       this.setState({ fetching: false })
       this.setState({ noMoreResults: false })
-      if (data) {
-        this.setState((state, props) => ({
-          results: data
-        }))
-      }
+
+
 
     } catch (error) {
       this.setState({
@@ -202,10 +258,8 @@ class Characters extends React.Component {
     }
   }
   setQuery(value) {
-
     this.setState((state, props) => ({ query: value }))
     this.fetchData(value)
-
   }
 
 
