@@ -42,7 +42,8 @@ class Characters extends React.Component {
       noMoreResults: false,
       fetching: false,
       loading: false,
-      error: null
+      error: null,
+      digest: ''
     }
 
     this.handleCloseModal = this.handleCloseModal.bind(this)
@@ -97,9 +98,13 @@ class Characters extends React.Component {
 
   fetchMoreData = async () => {
     try {
-      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?${this.state.query ? 'nameStartsWith=' + this.state.query : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e&offset=${20 * this.state.page}`)
-      const { data } = await response.json();
+      const response = await fetch(`http://gateway.marvel.com/v1/public/characters?${this.state.query ? 'nameStartsWith=' + this.state.query : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e&offset=${20 * this.state.page}`
+        , {
+          headers: { 'if-none-match': this.state.digest }
+        })
 
+      const characters = await response.json();
+      console.log(this.state.digest)
 
       this.setState({
         fetching: false
@@ -107,11 +112,10 @@ class Characters extends React.Component {
 
       this.setState((state, props) => ({ page: state.page++ }))
       this.setState((state, props) => ({
-        results: [...state.results, ...data.results]
+        results: [...state.results, ...characters.data.results]
       }))
 
-
-      if (data.offset > data.total - data.count)
+      if (characters.data.offset > characters.data.total - characters.data.count)
         this.setState({ noMoreResults: true })
     } catch (error) {
       this.setState({
@@ -126,10 +130,8 @@ class Characters extends React.Component {
 
     // store the comparison  values in array
     const unique = arr.map(e => e[comp])
-
       // store the indexes of the unique objects
       .map((e, i, final) => final.indexOf(e) === i && i)
-
       // eliminate the false indexes & return unique objects
       .filter((e) => arr[e]).map(e => arr[e]);
 
@@ -137,30 +139,30 @@ class Characters extends React.Component {
   }
 
   getCharacters(comics) {
-
     let characters = []
     comics.results.forEach(comic => {
       if (comic.characters.items.length > 0)
         comic.characters.items.forEach(character => {
           characters = [...characters, character]
         })
-
     })
     characters = this.getUnique(characters, 'name')
     return characters
   }
+
   fetchData = async (value) => {
     try {
       this.setState({ loading: true })
       console.log(value)
       let responseCharacters = await fetch(`http://gateway.marvel.com/v1/public/characters?${value ? 'nameStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
-      const { data: characters } = await responseCharacters.json()
-      console.log(characters)
+      const characters = await responseCharacters.json()
       let responseComics
       if (value !== '') {
         responseComics = await fetch(`http://gateway.marvel.com/v1/public/comics?${value ? 'titleStartsWith=' + value : ''}&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e`)
       }
-      const data = [...characters.results]
+      this.setState({ digest: characters.etag })
+      const data = [...characters.data.results]
+
       this.setState({
         loading: false
       })
