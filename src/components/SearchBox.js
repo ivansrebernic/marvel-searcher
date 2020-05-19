@@ -5,7 +5,7 @@ import FavoritesListItem from './FavoritesListItem'
 import FavoritesList from './FavoritesList'
 import SearchIconPNG from '../assets/images/search.png'
 import styled from 'styled-components'
-
+import ls from 'local-storage'
 
 
 const SearchBoxStyled = styled.form`
@@ -41,12 +41,18 @@ function SearchBox(props) {
     const [query, setQuery] = React.useState("")
     const [collapsed, setCollapsed] = React.useState('')
 
+    React.useEffect(function () {
 
+        const storedFavorites = ls.get('favorites')
+        setFavorites(storedFavorites)
+
+    }, []);
 
     //Rember to attribute Icons made by <a href="https://www.flaticon.com/authors/good-ware" title="Good Ware">Good Ware</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
     const addQueryToFavorites = () => {
         if (query !== "" && !favorites.includes(query)) {
             setFavorites([...favorites, query])
+            ls.set('favorites', [...favorites, query])
         }
 
     }
@@ -55,6 +61,7 @@ function SearchBox(props) {
         if (favorites) {
             const newFavorites = favorites.filter(favorite => { return favorite != query })
             setFavorites(newFavorites)
+            ls.set('favorites', newFavorites)
         }
 
     }
