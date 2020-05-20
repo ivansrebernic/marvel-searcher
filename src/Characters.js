@@ -99,12 +99,11 @@ class Characters extends React.Component {
         page = this.state.page
       }
       const resultsCharacters = await this.fetchCharactersByName([query], page)
-      console.log(resultsCharacters, this.state.page)
       const resultsCharactersFromComics = await this.fetchCharactersFromComics([query], page)
       results = [...resultsCharacters, ...resultsCharactersFromComics]
 
       if (results.length === 0) {
-        results = []
+        this.setState({ results: [] })
       } else {
         if (this.state.page > 0) {
           results = [...this.state.results, ...results]
@@ -182,7 +181,7 @@ class Characters extends React.Component {
     let results = [];
     let promisesResults;
     characters.forEach((character) => {
-      promises.push(fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${(characters == "") ? "" : "&nameStartsWith=" + character}&offset=${page * 20}`)
+      promises.push(fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${(characters === "") ? "" : "&nameStartsWith=" + character}&offset=${page * 20}`)
         .then(response => { return response.json() })
       )
     });
@@ -192,20 +191,41 @@ class Characters extends React.Component {
     });
     return results
   }
-  fetchCharactersFromComics = async (value, page) => {
+  fetchCharactersFromComics = async (comics, page) => {
     try {
-      let totalCharacters = []
-      let promises = []
-      let response = await fetch(`http://gateway.marvel.com/v1/public/comics${credentials}${value ? '&title=' + value : ''}`)
-      const { data } = await response.json()
-
-      data.results.forEach((comic) => {
-        if (comic.characters.available > 0) {
-          promises.push(fetch(`http://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`).then(response => { return response.json() }))
-        }
-
+      let promisesComics = []
+      //First get the comics matching entirely by name and not by how the comic name starts
+      comics.forEach(comic => {
+        let issueNumber = comic.match(/(#)([0-9])([0-9])?([0-9])?/g)
+        comic = comic.replace(issueNumber, '')
+        issueNumber = issueNumber[0].substr(1)
+        console.log(comic)
+        promisesComics.push(fetch(`http://gateway.marvel.com/v1/public/comics${credentials}&title=${comic}&issueNumber=${Number(issueNumber[0])}`)
+          .then(response => { return response.json() }))
       })
-      totalCharacters = Promise.all(promises)
+      let comicsResults = await Promise.all(promisesComics)
+      //Once we get all the results, proceed to get the characters that are in the comics provided
+      let promisesCharacters = []
+      comicsResults.forEach(result => {
+        result.data.results.forEach(comic => {
+          if (comic.characters.available > 0) {
+            promisesCharacters.push(fetch(`http://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
+              .then(response => { return response.json() }))
+          }
+        })
+      })
+      let charactersResults = await Promise.all(promisesCharacters)
+
+      //Add all the results of the characters into one array and remove duplicates
+      let totalCharacters = []
+      charactersResults.forEach(result => {
+        result.data.results.forEach(character => {
+          totalCharacters.push(character)
+        })
+      })
+      totalCharacters = _.uniqBy(totalCharacters, 'id')
+
+      //Finally return the characters
       return totalCharacters
     } catch (error) {
       console.log(error)
