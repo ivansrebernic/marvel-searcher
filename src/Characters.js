@@ -36,7 +36,7 @@ class Characters extends React.Component {
   constructor(props) {
     super(props)
     //console.log(props.location.search)
-    //console.log(qs.parse(props.location.search), { arrayFormat: 'comma' })
+    console.log(qs.parse(props.location.search), { arrayFormat: 'comma' })
     this.state = {
       query: "",
       character: '',
@@ -53,15 +53,34 @@ class Characters extends React.Component {
     this.handleOpenModal = this.handleOpenModal.bind(this)
     this.setQuery = this.setQuery.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
+
   }
   handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
     if (!this.state.noMoreResults && !this.state.fetching) {
-      this.fetchCharactersSearchBar(this.state.query)
+      if (this.props.location.search !== "") {
+        if (this.props.location.search) {
+          const query = qs.parse(this.props.location.search)
+          let characters;
+          let comics;
+          if (typeof query.characters === 'string') {
+            characters = [query.characters]
+          } else {
+            characters = query.characters
+          }
+          if (typeof query.comics === 'string') {
+            comics = [query.comics]
+          }
+          console.log(characters, comics)
+          this.fetchCharactersQueryParams(characters, comics)
+        } else {
+          this.fetchCharactersSearchBar(this.state.query)
+        }
+      }
+
     }
   }
   componentDidMount() {
-
     if (this.props.location.search) {
       const query = qs.parse(this.props.location.search)
       let characters;
@@ -74,7 +93,8 @@ class Characters extends React.Component {
       if (typeof query.comics === 'string') {
         comics = [query.comics]
       }
-      this.fetchCharacters(characters, comics)
+      console.log(characters, comics)
+      this.fetchCharactersQueryParams(characters, comics)
     } else {
       this.fetchRandom();
     }
@@ -84,6 +104,7 @@ class Characters extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
   }
+
   fetchCharactersSearchBar = async (query) => {
     try {
       let results = []
@@ -92,8 +113,6 @@ class Characters extends React.Component {
       const resultsCharacters = await this.fetchCharactersByName([query], this.state.offset)
       const resultsCharactersFromComics = await this.fetchCharactersFromComics([query], this.state.offset)
       results = [...resultsCharacters, ...resultsCharactersFromComics]
-
-
       results = _.uniqBy(results, 'id')
 
       //The query is new?
@@ -138,50 +157,123 @@ class Characters extends React.Component {
     }
   }
   fetchCharactersQueryParams = async (characters, comics) => {
-    try {
-      let results = [];
 
+    try {
+
+      let results = [];
       this.setState({
         loading: true
       })
+
       if (characters === undefined || characters == "")
         characters = []
       if (comics === undefined || comics == "")
         comics = []
+
+
       //If the query came without comics
       if (characters.length >= 1 && comics.length === 0) {
         results = await this.fetchCharactersByName(characters, this.state.offset)
       }
       //If the query came without characters
       if (characters.length === 0 && comics.length >= 1) {
-        results = await this.fetchCharactersByComic(comics, this.state.offset)
+        results = await this.fetchCharactersByComics(comics, this.state.offset)
       }
       //if the query came with both
       if (characters.length !== 0 && comics.length !== 0) {
         results = await this.fetchCharactersFromComics(characters, comics, this.state.offset)
       }
-      if (results.length === 0) {
-        results = []
-      } else {
+
+      console.log(results)
+      if (results.length !== 0) {
         if (this.state.offset > 0) {
-          this.setState((state, props) => ({
-            results: [...state.results, results]
-          }))
+          results = [...this.state.results, ...results]
+          results = _.uniqBy(results, 'id')
+          this.setState({ results: [...results] })
         } else {
+
           this.setState({ results: results })
         }
       }
-      this.setState({
-        loading: false
-      })
-      if (results.length < 20) {
-        this.setState({ noMoreResults: true })
-      }
-      this.setState((state, props) => ({ offset: state.offset + 20 }))
-      this.setState({ fetching: false })
+      this.setState({ loading: false })
+
     } catch (error) {
       console.log(error)
     }
+  }
+  fetchCharactersByComics = async (comics, offset) => {
+    try {
+
+      let promisesComics = []
+      //First get the comics matching entirely by name and not by how the comic name starts
+
+      comics.forEach(comic => {
+        let issueNumber = comic.match(/(#)([0-9])([0-9])?([0-9])?/g)
+        if (issueNumber) {
+          comic = comic.replace(issueNumber, '')
+          issueNumber = issueNumber[0].substr(1)
+        }
+        promisesComics.push(fetch(`http://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber[0]) : ''}`)
+          .then(response => { return response.json() }))
+      })
+      let comicsResults = await Promise.all(promisesComics)
+
+
+      //Once we get all the results, proceed to get the characters that are in the comics provided
+      let promisesCharacters = []
+
+      let flag = false;
+      let tempComics = []
+      comicsResults.forEach(result => {
+
+
+        if (result.data.count === result.data.limit) {
+          if (result.data.offset === 0) {
+            this.setState({ etag: result.etag })
+          }
+
+          if (!flag) {
+            this.setState({ offset: offset + result.data.limit })
+            this.setState({ noMoreResults: false })
+            flag = true;
+          }
+        }
+
+        result.data.results.forEach(comic => {
+          if (comic.characters.available > 0) {
+            promisesCharacters.push(fetch(`http://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
+              .then(response => {
+                return response.json()
+              }).then((data) => {
+                return data
+              }))
+          }
+        })
+      })
+      let charactersResults = await Promise.all(promisesCharacters)
+
+      //Add all the results of the characters into one array and remove duplicates
+      let totalCharacters = []
+      charactersResults.forEach(result => {
+        //Attach the comics in the character
+        result.data.results.forEach(character => {
+          const newCharacter = _.find(totalCharacters, { 'id': character.id })
+          if (!newCharacter) {
+            totalCharacters.push(character)
+          }
+        })
+      })
+      //Finally return the characters
+
+      if (!flag) {
+        this.setState({ noMoreResults: true })
+      }
+
+      return totalCharacters
+    } catch (error) {
+      console.log(error)
+    }
+
   }
   fetchCharactersByName = async (characters, offset) => {
     let promises = []
@@ -216,10 +308,11 @@ class Characters extends React.Component {
           .then(response => { return response.json() }))
       })
       let comicsResults = await Promise.all(promisesComics)
+      console.log(comicsResults)
+
 
       //Once we get all the results, proceed to get the characters that are in the comics provided
       let promisesCharacters = []
-
 
       let flag = false;
       let tempComics = []
@@ -235,7 +328,6 @@ class Characters extends React.Component {
             this.setState({ offset: offset + result.data.limit })
             this.setState({ noMoreResults: false })
             flag = true;
-            console.log("flag ahora es true")
           }
         }
 
@@ -347,6 +439,7 @@ class Characters extends React.Component {
         {this.state.loading && <Loader></Loader>}
         < StyledCharacters >
           {this.state.results.map(character => (
+
             <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
           <ModalCharacterInfo character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />

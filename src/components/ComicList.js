@@ -62,8 +62,8 @@ class ComicList extends React.Component {
             <ComicListStyled >
                 {
                     this.state.comics.map(comic => (
-                        <ComicItem key={comic.title || comic.name}>
-                            <span>{comic.title || comic.name}</span>
+                        <ComicItem key={comic.name || comic.title}>
+                            <span>{comic.name || comic.title}</span>
                         </ComicItem>
                     ))
                 }
