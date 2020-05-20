@@ -56,7 +56,7 @@ function ModalCharacterInfo(props) {
 
                 </div>
                 <i> Comics in which {props.character.name} appeared:</i>
-                <ComicList comicList={props.character.comics.items}></ComicList>
+                <ComicList comics={props.character.comics}></ComicList>
             </ModalCharacterInfoStyled>
         </Modal>, document.getElementById('modal')
     )

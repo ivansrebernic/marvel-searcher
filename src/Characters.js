@@ -216,42 +216,71 @@ class Characters extends React.Component {
           .then(response => { return response.json() }))
       })
       let comicsResults = await Promise.all(promisesComics)
+
       //Once we get all the results, proceed to get the characters that are in the comics provided
       let promisesCharacters = []
 
 
       let flag = false;
+      let tempComics = []
       comicsResults.forEach(result => {
-        console.log(comicsResults)
 
+        tempComics = [...tempComics, result.data.results].flat()
         if (result.data.count === result.data.limit) {
           if (result.data.offset === 0) {
             this.setState({ etag: result.etag })
           }
+
           if (!flag) {
             this.setState({ offset: offset + result.data.limit })
+            this.setState({ noMoreResults: false })
             flag = true;
+            console.log("flag ahora es true")
           }
         }
 
         result.data.results.forEach(comic => {
           if (comic.characters.available > 0) {
             promisesCharacters.push(fetch(`http://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
-              .then(response => { return response.json() }))
+              .then(response => {
+                return response.json()
+              }).then((data) => {
+                data.comic = comic.id
+                return data
+              }))
           }
         })
       })
       let charactersResults = await Promise.all(promisesCharacters)
+
       //Add all the results of the characters into one array and remove duplicates
       let totalCharacters = []
-      console.log(charactersResults)
+
       charactersResults.forEach(result => {
+        //Delete the current comics in the result
         result.data.results.forEach(character => {
-          totalCharacters.push(character)
+          character.comics.items = []
+        })
+
+        //Attach the comics in the character
+        result.data.results.forEach(character => {
+
+          const newComic = _.find(tempComics, { 'id': result.comic })
+          const newCharacter = _.find(totalCharacters, { 'id': character.id })
+
+          if (!newCharacter) {
+            character.comics.items.push(newComic)
+            totalCharacters.push(character)
+          } else {
+            newCharacter.comics.items.push(newComic)
+          }
         })
       })
-      totalCharacters = _.uniqBy(totalCharacters, 'id')
       //Finally return the characters
+      console.log(this.state.noMoreResults)
+      if (!flag) {
+        this.setState({ noMoreResults: true })
+      }
       return totalCharacters
     } catch (error) {
       console.log(error)

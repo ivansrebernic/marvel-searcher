@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
+
 const ComicListStyled = styled.ul`
     background-color:#F7F8FA;
     margin:1rem;
@@ -18,23 +19,35 @@ const ComicItem = styled.li`
 `
 
 
-function ComicList(props) {
+class ComicList extends React.Component {
 
+    constructor(props) {
+        super(props)
+        this.state = { comics: [] }
+
+        this.extractYearFromString = this.extractYearFromString.bind(this)
+    }
+
+    componentDidMount() {
+        console.log(this.props.comics)
+        const sortedComics = this.props.comics.items.sort(this.sortComics)
+
+        this.setState({ comics: sortedComics })
+    }
 
     //Apply regex to find the year of origin from title string
-    const extractYearFromString = (string) => {
+    extractYearFromString = (string) => {
         const year = /(\d{4})/.exec(string);
         if (!year)
             return 0
-
         return Number(year[0])
     }
 
     //Sort comics by year in which they were released
-    let sortComics = (a, b) => {
+    sortComics = (a, b) => {
 
-        const dateA = extractYearFromString(a.name)
-        const dateB = extractYearFromString(b.name)
+        const dateA = this.extractYearFromString(a.name || a.title)
+        const dateB = this.extractYearFromString(b.name || b.title)
         if (dateA > dateB)
             return 1
         if (dateB > dateA)
@@ -43,22 +56,21 @@ function ComicList(props) {
         return 0;
     };
 
-    let sortedComics = props.comicList.sort(sortComics)
 
-    return (
+    render() {
+        return (
+            <ComicListStyled >
+                {
+                    this.state.comics.map(comic => (
+                        <ComicItem key={comic.title || comic.name}>
+                            <span>{comic.title || comic.name}</span>
+                        </ComicItem>
+                    ))
+                }
+            </ ComicListStyled>
+        )
+    }
 
-
-
-        <ComicListStyled >
-            {
-                sortedComics.map(comic => (
-                    <ComicItem key={comic.name}>
-                        <span>{comic.name}</span>
-                    </ComicItem>
-                ))
-            }
-        </ ComicListStyled>
-    )
 }
 
 export default ComicList
