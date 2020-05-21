@@ -1,11 +1,12 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { ThemeProvider } from 'styled-components'
 import Loader from './components/Loader'
 import ModalCharacterInfo from './components/ModalCharacterInfo'
 import CharacterCard from './components/CharacterCard'
 import NavBar from './components/NavBar'
 import qs from 'query-string'
 import _ from 'lodash'
+
 
 
 
@@ -17,8 +18,18 @@ import _ from 'lodash'
 /* http://gateway.marvel.com/v1/public/comics?ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e */
 
 
+
+
+let flagCharacters = false;
+let flagComics = false;
+let urlQuery = false;
+let etag = ""
+let offset = 0
+let charactersInQuery = []
+let comicsInQuery = []
+
 const StyledCharacters = styled.div`
-  background-color: #E5E5E5;
+  background-color: ${props => props.theme.main.page};
   margin-top:4rem;
   margin-left:4rem;
   margin-right:4rem;
@@ -28,13 +39,7 @@ const StyledCharacters = styled.div`
   grid-template-columns: repeat(auto-fill, 350px);
 `
 
-let flagCharacters = false;
-let flagComics = false;
-let urlQuery = false;
-let etag = ""
-let offset = 0
-let charactersInQuery = []
-let comicsInQuery = []
+
 //The global state of the application, the query will be stored here for easier access from the parent container
 const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e"
 class Characters extends React.Component {
@@ -413,6 +418,7 @@ class Characters extends React.Component {
 
   render() {
     return (
+
       <div>
         <NavBar handleQuery={this.setQuery} />
         < StyledCharacters >

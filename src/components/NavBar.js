@@ -9,7 +9,7 @@ const NavBarStyled = styled.nav`
     position: sticky;
     z-index: 2;
     display:flex;
-    background-color:white;
+    background-color:${props => props.theme.main.navbar};
     box-shadow: 1px 1px 3px gray;
 
 `
