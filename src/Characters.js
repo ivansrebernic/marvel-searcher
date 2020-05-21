@@ -30,7 +30,7 @@ const StyledCharacters = styled.div`
 
 let flagCharacters = false;
 let flagComics = false;
-
+let urlQuery = false;
 //The global state of the application, the query will be stored here for easier access from the parent container
 const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e"
 class Characters extends React.Component {
@@ -61,25 +61,70 @@ class Characters extends React.Component {
   handleScroll() {
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
     if (!this.state.noMoreResults && !this.state.fetching) {
-      this.fetchCharacters(this.state.query, this.state.query, this.state.offset)
+      if (urlQuery) {
+        const query = qs.parse(this.props.location.search)
+        let characters = [];
+        let comics = [];
+
+        if (!query.character) {
+          query.character = characters
+        }
+        if (!query.comics) {
+          query.comics = comics
+        }
+
+        if (typeof query.character == 'string') {
+          characters.push(query.character)
+        }
+
+        if (typeof query.comic == 'string') {
+          comics.push(query.comic)
+        }
+
+        this.fetchCharactersFromURL(characters, comics, this.state.offset)
+      } else {
+        this.fetchCharacters(this.state.query, this.state.query, this.state.offset)
+      }
+
     }
   }
   componentDidMount() {
+    //If the components mounts and there is a query in the url, then search by url
     if (this.props.location.search) {
+
+      urlQuery = true;
+
       const query = qs.parse(this.props.location.search)
-      let characters;
-      let comics;
-      if (typeof query.characters === 'string') {
-        characters = [query.characters]
-      } else {
-        characters = query.characters
-      }
-      if (typeof query.comics === 'string') {
-        comics = [query.comics]
+
+      let characters = query.character;
+      let comics = query.comic;
+
+
+
+      if (!characters) {
+        characters = []
       }
 
-      this.fetchCharactersQueryParams(characters, comics)
+      if (!comics) {
+        comics = []
+      }
+
+      if (typeof characters == 'string') {
+        characters = [characters]
+      }
+
+      if (typeof comics == 'string') {
+        comics = [comics]
+      }
+      console.log(characters, comics)
+      this.fetchCharactersFromURL(characters, comics, 0)
+      //Because we want to have a different behaviour when searching by url, 
+      //we'll use another method for the search if the query possess multiple parameters, 
+      //if not, the we'll use a simple searchbar search functionality
+
+
     } else {
+      //if there is no query in url, just fetch a random character with a random offset
       this.fetchRandom();
     }
     window.addEventListener('scroll', this.handleScroll);
@@ -88,16 +133,62 @@ class Characters extends React.Component {
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
   }
-  fetchCharacters = async (characters, comics, offset) => {
+  fetchCharactersFromURL = async (characters, comics, offset) => {
 
     try {
       this.setState({ fetching: true })
       let charactersResults = []
       let comicsResults = []
+      let characterFromComicResults = []
       let totalResults = []
 
-      let charactersSearch = []
-      let comicsSearch = []
+      console.log(characters, comics, offset)
+      if (characters.length > 0 && comics.length > 0) {
+        characterFromComicResults = await this.fetchCharactersFromComics(comics, offset)
+      }
+
+      if (characters.length > 0 && !flagCharacters) {
+        //Character search
+        charactersResults = await this.fetchCharactersByName(characters, offset)
+      }
+
+      if (comics.length > 0 && !flagComics) {
+        //Comic search
+        comicsResults = await this.fetchCharactersByComics(comics, offset)
+      }
+
+      //If the current search of comics doesn't have anymore results
+      if (comicsResults.length === 0) {
+        flagComics = true
+      }
+      //If the current search of characters doesn't have anymore results
+      if (charactersResults.length === 0) {
+        flagCharacters = true
+      }
+
+      if (flagComics && flagCharacters) {
+        this.setState({ noMoreResults: true })
+      } else {
+        this.setState({ offset: offset + 20 })
+      }
+
+      totalResults = [...charactersResults, ...comicsResults]
+      totalResults = [...this.state.results, ...totalResults]
+      totalResults = _.uniqBy(totalResults, 'id')
+
+      this.setState({ results: [...totalResults] })
+      this.setState({ fetching: false })
+    } catch (error) {
+
+    }
+
+  }
+  fetchCharacters = async (characters, comics, offset) => {
+    try {
+      this.setState({ fetching: true })
+      let charactersResults = []
+      let comicsResults = []
+      let totalResults = []
 
       if (typeof characters === "string") {
         characters = [characters]
@@ -108,7 +199,7 @@ class Characters extends React.Component {
 
       if (characters.length > 0 && !flagCharacters) {
         //Character search
-        //charactersResults = await this.fetchCharactersByName(characters, offset)
+        charactersResults = await this.fetchCharactersByName(characters, offset)
       }
       if (comics.length > 0 && !flagComics) {
         //Comic search
@@ -133,11 +224,6 @@ class Characters extends React.Component {
       totalResults = [...charactersResults, ...comicsResults]
       totalResults = [...this.state.results, ...totalResults]
       totalResults = _.uniqBy(totalResults, 'id')
-      /*
-      if (comics.length > 0 && characters.length > 0) {
-        //Characters in comics search
-        results = await this.fetchCharactersFromComics(comics, characters, offset)
-      }*/
 
 
       this.setState({ results: [...totalResults] })
@@ -146,98 +232,24 @@ class Characters extends React.Component {
     } catch (error) {
 
     }
-
-
   }
-  fetchCharactersSearchBar = async (query) => {
-    try {
-      let results = []
 
-      this.setState({ fetching: true })
-      const resultsCharacters = await this.fetchCharactersByName([query], this.state.offset)
-      const resultsCharactersFromComics = await this.fetchCharactersFromComics([query], this.state.offset)
-      results = [...resultsCharacters, ...resultsCharactersFromComics]
-      results = _.uniqBy(results, 'id')
-
-      //The query is new?
-      if (query !== this.state.query) {
-        this.setState((state, props) => ({ query: query }))
-        this.setState({ results: [...results] })
-      } else {
-        results = [...this.state.results, ...results]
-        results = _.uniqBy(results, 'id')
-        this.setState({ results: [...results] })
-      }
-
-      this.setState({ fetching: false })
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
-  fetchCharactersQueryParams = async (characters, comics) => {
-
-    try {
-
-      let results = [];
-      this.setState({
-        loading: true
-      })
-      this.setState({ fetching: true })
-
-      if (characters === undefined || characters == "")
-        characters = []
-      if (comics === undefined || comics == "")
-        comics = []
-
-
-      //If the query came without comics
-      if (characters.length >= 1 && comics.length === 0) {
-        results = await this.fetchCharactersByName(characters, this.state.offset)
-      }
-      //If the query came without characters
-      if (characters.length === 0 && comics.length >= 1) {
-        results = await this.fetchCharactersByComics(comics, this.state.offset)
-      }
-      //if the query came with both
-      if (characters.length !== 0 && comics.length !== 0) {
-        results = await this.fetchCharactersFromComics(characters, comics, this.state.offset)
-      }
-
-      if (results.length !== 0) {
-        if (this.state.offset > 0) {
-          results = [...this.state.results, ...results]
-          results = _.uniqBy(results, 'id')
-          this.setState({ results: [...results] })
-        } else {
-          this.setState({ results: results })
-        }
-      }
-      this.setState({ fetching: false })
-      this.setState({ loading: false })
-
-    } catch (error) {
-      console.log(error)
-    }
-  }
   fetchCharactersByComics = async (comics, offset) => {
 
     try {
       let promisesComics = []
       //First get the comics matching entirely by name and not by how the comic name starts
-
       comics.forEach(comic => {
         let issueNumber = comic.match(/(#)([0-9])([0-9])?([0-9])?/g)
         if (issueNumber) {
           comic = comic.replace(issueNumber, '')
           issueNumber = issueNumber[0].substr(1)
         }
-        console.log(comic, issueNumber, offset)
         promisesComics.push(fetch(`http://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
           .then(response => { return response.json() }))
       })
       let comicsResults = await Promise.all(promisesComics)
-      console.log(comicsResults)
+
 
 
       //Once we get all the results, proceed to get the characters that are in the comics provided
@@ -385,14 +397,6 @@ class Characters extends React.Component {
     } catch (error) {
       console.log(error)
     }
-  }
-  fetchCharacterByResourceURI = (resourceURI) => {
-    return new Promise(resolve => {
-      fetch(resourceURI + credentials)
-        .then(response => { return response.json() })
-        .then(({ data }) => { resolve(data.results[0]) })
-    })
-
   }
   fetchRandom = async () => {
     try {
