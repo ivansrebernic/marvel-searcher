@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import Thumbnail from '../assets/images/portrait_xlarge.jpg'
 import FavoriteButton from './FavoriteButton'
 import ModalCharacterInfo from './ModalCharacterInfo'
 
@@ -62,7 +61,6 @@ function CharacterCard(props) {
             <h1 >
                 {props.character.name}
             </h1>
-
         </CharacterCardStyled >
 
     )

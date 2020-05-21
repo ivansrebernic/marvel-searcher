@@ -53,7 +53,6 @@ function ModalCharacterInfo(props) {
                         <h3>{props.character.name}</h3>
                         <p>{props.character.description}</p>
                     </div>
-
                 </div>
                 <i> Comics in which {props.character.name} appeared:</i>
                 <ComicList comics={props.character.comics}></ComicList>

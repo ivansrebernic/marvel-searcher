@@ -1,9 +1,9 @@
 import React from 'react'
 import styled, { ThemeProvider } from 'styled-components'
-import Loader from './components/Loader'
-import ModalCharacterInfo from './components/ModalCharacterInfo'
-import CharacterCard from './components/CharacterCard'
-import NavBar from './components/NavBar'
+import Loader from '../components/Loader'
+import ModalCharacterInfo from '../components/ModalCharacterInfo'
+import CharacterCard from '../components/CharacterCard'
+import NavBar from '../components/NavBar'
 import qs from 'query-string'
 import _ from 'lodash'
 

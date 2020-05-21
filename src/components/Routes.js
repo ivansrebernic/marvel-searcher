@@ -4,7 +4,7 @@ import {
 
     useLocation
 } from "react-router-dom";
-import Characters from "../Characters";
+import Characters from "../containers/Characters";
 
 // A custom hook that builds on useLocation to parse
 // the query string for you.
