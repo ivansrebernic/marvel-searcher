@@ -158,9 +158,7 @@ class Characters extends React.Component {
 
       totalResults = _.uniqBy(totalResults, 'id')
 
-      if (totalResults.length === 0) {
-        this.setState({ noMoreResults = true })
-      }
+
 
       this.setState({ results: [...this.state.results, ...totalResults] })
       this.setState({ fetching: false })
@@ -225,7 +223,9 @@ class Characters extends React.Component {
       }
       results = [...results, ...promiseResults.data.results]
     });
-
+    if (!flag) {
+      this.setState({ noMoreResults: true })
+    }
 
     return results
   }
