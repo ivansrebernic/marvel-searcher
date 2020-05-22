@@ -44,7 +44,10 @@ function SearchBox(props) {
     React.useEffect(function () {
 
         const storedFavorites = ls.get('favorites')
-        setFavorites(storedFavorites)
+        if (storedFavorites) {
+            setFavorites(storedFavorites)
+        }
+
 
     }, []);
 

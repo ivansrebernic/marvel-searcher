@@ -101,7 +101,7 @@ class Characters extends React.Component {
       comicsInQuery = comicsQuery
 
 
-
+      console.log(charactersInQuery, comicsInQuery)
 
       this.fetchCharacters(charactersInQuery, comicsInQuery)
       //Because we want to have a different behaviour when searching by url, 
@@ -116,55 +116,6 @@ class Characters extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('scroll', this.handleScroll)
-  }
-  fetchCharactersFromURL = async (characters, comics) => {
-
-    try {
-      this.setState({ fetching: true })
-      let charactersResults = []
-      let comicsResults = []
-      let totalResults = []
-
-
-      if (characters.length > 0 && comics.length > 0) {
-        charactersResults = await this.fetchCharactersFromComics(comics, characters)
-      } else {
-        if (characters.length > 0 && !flagCharacters) {
-          //Character search
-          charactersResults = await this.fetchCharactersByName(characters)
-        }
-        if (comics.length > 0 && !flagComics) {
-          //Comic search
-          comicsResults = await this.fetchCharactersByComics(comics)
-        }
-      }
-
-      //If the current search of comics doesn't have anymore results
-      if (comicsResults.length === 0) {
-        flagComics = true
-      }
-      //If the current search of characters doesn't have anymore results
-      if (charactersResults.length === 0) {
-        flagCharacters = true
-      }
-
-
-      if (flagComics && flagCharacters) {
-        this.setState({ noMoreResults: true })
-      } else {
-        offset += 20;
-      }
-
-      totalResults = [...charactersResults, ...comicsResults]
-      totalResults = [...this.state.results, ...totalResults]
-      totalResults = _.uniqBy(totalResults, 'id')
-
-      this.setState({ results: [...totalResults] })
-      this.setState({ fetching: false })
-    } catch (error) {
-
-    }
-
   }
   fetchCharacters = async (characters, comics) => {
     try {
@@ -181,7 +132,7 @@ class Characters extends React.Component {
         comics = [comics]
       }
 
-      if (characters.length > 0 && comics.length > 0) {
+      if (characters.length > 0 && comics.length > 0 && urlQuery) {
         totalResults = await this.fetchCharactersFromComics(comics, characters)
       } else {
         charactersResults = await this.fetchCharactersByName(characters)
@@ -198,7 +149,7 @@ class Characters extends React.Component {
         if (comicsIDList.length > 0 && comicsIDList.length < 10) {
           let comicsIDString = _.join(comicsIDList, ',')
           let promises = []
-          const response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDList !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
+          const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDList !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
           const { data } = await response.json()
 
           totalResults = [...totalResults, ...data.results]
@@ -229,7 +180,7 @@ class Characters extends React.Component {
           comic = comic.replace(issueNumber, '')
           issueNumber = issueNumber[0].substr(1)
         }
-        promisesComics.push(fetch(`http://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
+        promisesComics.push(fetch(`https://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
           .then(response => { return response.json() }))
       })
       let comicsResults = await Promise.all(promisesComics)
@@ -245,7 +196,7 @@ class Characters extends React.Component {
     let results = [];
     let promisesResults;
     characters.forEach((character) => {
-      promises.push(fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${(characters === "") ? "" : "&nameStartsWith=" + character}&offset=${offset}`)
+      promises.push(fetch(`https://gateway.marvel.com/v1/public/characters${credentials}${(characters === "") ? "" : "&nameStartsWith=" + character}&offset=${offset}`)
         .then(response => {
           return response.json()
         })
@@ -296,7 +247,7 @@ class Characters extends React.Component {
           issueNumber = issueNumber[0].substr(1)
         }
 
-        promisesComics.push(fetch(`http://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
+        promisesComics.push(fetch(`https://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
           .then(response => { return response.json() }))
       })
 
@@ -310,7 +261,7 @@ class Characters extends React.Component {
 
         result.data.results.forEach(comic => {
           if (comic.characters.available > 0) {
-            promisesCharacters.push(fetch(`http://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
+            promisesCharacters.push(fetch(`https://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
               .then(response => {
                 return response.json()
               }).then((data) => {
@@ -371,7 +322,7 @@ class Characters extends React.Component {
       const randomPage = () => {
         return Math.floor(Math.random() * 50)
       }
-      const response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
+      const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
       const { data } = await response.json();
       //Elegimos aleatoriamente un personaje de todos los de la pagina
       const randomCharacter = () => {
@@ -397,6 +348,7 @@ class Characters extends React.Component {
       flagCharacters = false;
       flagComics = false;
       offset = 0;
+      urlQuery = false
       this.setState({ noMoreResults: false })
       this.setState({ results: [] })
       this.setState({ query: query })

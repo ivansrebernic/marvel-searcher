@@ -4,14 +4,13 @@ import ReactDOM from 'react-dom'
 
 
 const ModalStyled = styled.div`
-    z-index:3;
+    z-index:1000;
     position: fixed;
+    width:100%;
+    height:100%;
     top:0;
     left:0;
     background-color:rgba(0,0,0,0.3);
-    width:100%;
-    height:100%;
-
 `
 
 const CloseButton = styled.span`
@@ -37,6 +36,8 @@ top: 50%;
 left: 50%;
 width:100%;
 max-width:600px;
+max-height:80vh;
+
 padding-bottom: 1rem;
 transform: translate(-50%, -50%);
 border-radius: 1%;
