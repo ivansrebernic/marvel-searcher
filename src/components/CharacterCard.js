@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import FavoriteButton from './FavoriteButton'
-import ModalCharacterInfo from './ModalCharacterInfo'
 
 //The size of the thumbnails that is going to be requested
 //TO DO: Comment other variants

@@ -34,16 +34,20 @@ const ModalBox = styled.div`
 position: fixed ;
 top: 50%;
 left: 50%;
-width:100%;
+width:80%;
+height:80%;
 max-width:600px;
-max-height:80vh;
-
 padding-bottom: 1rem;
 transform: translate(-50%, -50%);
 border-radius: 1%;
-background-color:white;
+background-color:${props => props.theme.main.modal};
 display:flex;
 flex-direction:column;
+@media (max-width: 768px) {
+
+    width:100%;
+    height:100%;
+  }
 `
 
 function Modal(props) {

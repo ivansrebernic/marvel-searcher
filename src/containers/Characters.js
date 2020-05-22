@@ -20,8 +20,7 @@ import _ from 'lodash'
 
 
 
-let flagCharacters = false;
-let flagComics = false;
+
 let urlQuery = false;
 let etag = ""
 let offset = 0
@@ -42,13 +41,13 @@ const StyledCharacters = styled.div`
 
 //The global state of the application, the query will be stored here for easier access from the parent container
 const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e"
+
 class Characters extends React.Component {
 
 
   constructor(props) {
     super(props)
     //console.log(props.location.search)
-
     this.state = {
       query: "",
       character: '',
@@ -148,8 +147,7 @@ class Characters extends React.Component {
 
         if (comicsIDList.length > 0 && comicsIDList.length < 10) {
           let comicsIDString = _.join(comicsIDList, ',')
-          let promises = []
-          const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDList !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
+          const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDString !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
           const { data } = await response.json()
 
           totalResults = [...totalResults, ...data.results]
@@ -160,7 +158,9 @@ class Characters extends React.Component {
 
       totalResults = _.uniqBy(totalResults, 'id')
 
-
+      if (totalResults.length === 0) {
+        this.setState({ noMoreResults = true })
+      }
 
       this.setState({ results: [...this.state.results, ...totalResults] })
       this.setState({ fetching: false })
@@ -215,10 +215,7 @@ class Characters extends React.Component {
 
       //If the response came with a full container
       if (promiseResults.data.count === promiseResults.data.limit) {
-        //If is the first search done with this query, set digest
-        if (promiseResults.data.offset === 0 && promiseResults.length === 1) {
-          etag = promiseResults.etag
-        }
+
         flag = true;
         //Add offset for consecuent searches
         offset = offset + promiseResults.data.limit;
@@ -228,9 +225,7 @@ class Characters extends React.Component {
       }
       results = [...results, ...promiseResults.data.results]
     });
-    if (!flag) {
-      this.setState({ noMoreResults: true })
-    }
+
 
     return results
   }
@@ -342,11 +337,10 @@ class Characters extends React.Component {
     }
   }
   setQuery(query) {
-    if (query == "") {
+    if (query === "") {
       this.fetchRandom()
     } else {
-      flagCharacters = false;
-      flagComics = false;
+
       offset = 0;
       urlQuery = false
       this.setState({ noMoreResults: false })
@@ -378,7 +372,10 @@ class Characters extends React.Component {
 
             <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
-          <ModalCharacterInfo character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
+
+          <ModalCharacterInfo theme={this.props.theme} character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
+
+
         </StyledCharacters>}
         {this.state.fetching && <Loader></Loader>}
         {this.state.noMoreResults && <h4 style={{ textAlign: "center" }}>No hay mas resultados</h4>}

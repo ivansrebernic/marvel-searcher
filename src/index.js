@@ -3,29 +3,15 @@ import ReactDOM from 'react-dom';
 import Router from './components/Routes'
 import * as serviceWorker from './serviceWorker';
 import { createGlobalStyle, ThemeProvider } from 'styled-components';
-import { Redirect } from 'react-router-dom';
+import theme from './themes/'
+
 
 
 
 //Main theme navbar = F7F7F7
 // page:F7F8FA
 
-const mainTheme = {
-  main: {
-    navbar: '#F7F7F7',
-    page: '#F7F8FA'
-  }
 
-}
-
-const marvelTheme = {
-  main: {
-    navbar: 'black',
-    page: 'red',
-  }
-}
-//Change this variable for one of the others themes
-let theme = mainTheme
 
 
 const GlobalStyle = createGlobalStyle`
@@ -41,7 +27,6 @@ const GlobalStyle = createGlobalStyle`
 `
 
 ReactDOM.render(
-
   <React.StrictMode >
     <GlobalStyle />
     <ThemeProvider theme={theme}>
@@ -49,7 +34,6 @@ ReactDOM.render(
       </Router>
     </ThemeProvider>
   </React.StrictMode>,
-
   document.getElementById('root')
 );
 

@@ -62,7 +62,7 @@ function SearchBox(props) {
     const removeQueryFromFavorites = () => {
 
         if (favorites) {
-            const newFavorites = favorites.filter(favorite => { return favorite != query })
+            const newFavorites = favorites.filter(favorite => { return favorite !== query })
             setFavorites(newFavorites)
             ls.set('favorites', newFavorites)
         }

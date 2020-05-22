@@ -3,16 +3,13 @@ import styled from 'styled-components'
 
 
 const ComicListStyled = styled.ul`
-    background-color:#F7F8FA;
+
+    margin:1rem;
+    height:70vh;
     width:80%;
-    height:80%;
-    max-height:70vh;
-    max-width:50rem;
     padding:0;
-    overflow:auto;
-
-    list-style-type:none;
-
+    overflow:hidden;
+    overflow-y:scroll;
     li:nth-child(2n){
         background-color:#F7F8FA;
     }
@@ -20,18 +17,20 @@ const ComicListStyled = styled.ul`
         background-color:white;
     }
 
+    @media (max-width: 768px) {
+        height:80vh;
+      }
+
 `
 const ComicItem = styled.li`
-
+      width:100%;
     display:flex;
-    height:100%;
-    max-height:5rem;
-    width:100%;
     justify-content:space-around;
+    height:5rem;
     span{
         margin:auto;
         text-align:center;
-        display:inline-block;
+
     }
     img{
         margin:5px;
@@ -91,11 +90,13 @@ class ComicList extends React.Component {
                         <ComicItem key={comic.name || comic.title}>
                             <span>{comic.name || comic.title}</span>
                             {comic.thumbnail &&
-                                <img src={comic.thumbnail.path + "/portrait_small." + comic.thumbnail.extension}></img>
+                                <img src={comic.thumbnail.path + "/portrait_small." + comic.thumbnail.extension} alt="hero thumbnail"></img>
                             }
                         </ComicItem>
                     ))
+
                 }
+                {this.state.comics.length === 0 && <li>There is no comics registered from this super-hero</li>}
             </ ComicListStyled>
         )
     }

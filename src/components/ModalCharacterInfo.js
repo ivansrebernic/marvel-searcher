@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import Modal from './Modal'
 import ComicList from './ComicList'
@@ -13,50 +13,37 @@ const ModalCharacterInfoStyled = styled.div`
     flex-direction:column;
     justify-content:center;
     align-items:center;
-    img{
-
+    div{
+        padding:1rem;
     }
 
 `
 const CharacterInfo = styled.div`
 
+
     display:flex;
-    flex-direction:row;
 
-    width:100%;
+    flex-direction:column;
 
+    background-color: ${props => props.theme.main.modal};
     img{
-        min-height:10rem;
-        min-width:10rem;
-        max-width:20rem;
-        max-height:20rem;
-        height:100%;
+        align-self:center;
         width:100%;
-        margin:10px;
+        max-width:12rem;
     }
     div{
         h3{
-            align-self:center;
+            text-align:center;
             margin:0;
         }
-        p{
-            font-size:16px;
-        }
-        display:flex;
-        width:70%;
-        flex-direction:column;
+        margin:10px;
+
     }
+
 
 
     @media (max-width: 768px) {
 
-        align-items:center;
-        flex-direction: column;
-        div{
-
-            p{
-                font-size:12px;
-            }
 
       }
 
@@ -67,9 +54,18 @@ function ModalCharacterInfo(props) {
 
     const [section, setSection] = React.useState('info')
 
+    React.useEffect(() => {
+
+        return () => {
+            if (section === 'comics')
+                setSection('info')
+        }
+    });
+
     if (!props.isOpen && !props.character) {
         return null
-    }
+    };
+
 
 
     return ReactDOM.createPortal(
@@ -81,14 +77,12 @@ function ModalCharacterInfo(props) {
                 </div>
                 {section === 'info' &&
                     <CharacterInfo>
-
                         <img src={props.character.thumbnail.path + '/' + imageSize + '.' + props.character.thumbnail.extension} alt="Super hero"></img>
                         <div>
                             <h3>{props.character.name}</h3>
                             {!props.character.description && <p>There is no description for this super-hero</p>}
                             <p>{props.character.description}</p>
                         </div>
-
                     </CharacterInfo>}
                 {section === 'comics' &&
                     <ComicList comics={props.character.comics}>
