@@ -10,7 +10,7 @@ import { act } from 'react-test-renderer'
 
 describe('<Searchbox/>', () => {
     it('Renders correctly', () => {
-        const wrapper = shallow(Searchbox)
-        expect(wrapper.length).toBeEqual(1)
+        const wrapper = shallow(<Searchbox></Searchbox>)
+        expect(wrapper).toHaveLength(1)
     })
 })
