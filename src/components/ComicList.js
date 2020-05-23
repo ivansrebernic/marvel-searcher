@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import Loader from './Loader'
 
 
 const ComicListStyled = styled.ul`
@@ -44,20 +45,57 @@ const ComicItem = styled.li`
 
 
 `
-
-
+let offset = 0;
+let collectionURI = ""
 class ComicList extends React.Component {
 
     constructor(props) {
         super(props)
-        this.state = { comics: [] }
+        collectionURI = props.comics.collectionURI
+        this.state = {
+            comics: [],
+            loading: false,
+            noMoreComics: false
+        }
         this.extractYearFromString = this.extractYearFromString.bind(this)
+        this.loadComics = this.loadComics.bind(this)
+        this.handleScroll = this.handleScroll.bind(this)
     }
 
     componentDidMount() {
-        console.log(this.props.comics)
-        const sortedComics = this.props.comics.items.sort(this.sortComics)
-        this.setState({ comics: sortedComics })
+        offset = 0;
+        document.addEventListener('scroll', this.trackScrolling);
+        this.loadComics()
+
+
+    }
+    handleScroll = (e) => {
+        const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
+        if (bottom && !this.state.noMoreComics && !this.state.loading) {
+            console.log(this.state.comics)
+            this.loadComics()
+        }
+    }
+
+    loadComics = async () => {
+
+        try {
+            this.setState({ loading: true })
+            const response = await fetch(this.props.comics.collectionURI + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified" + "&offset=" + offset)
+            const { data } = await response.json()
+            offset += data.count
+            console.log(data, offset)
+            if (data.count < data.limit && data.offset > 0) {
+                this.setState({ noMoreComics: true })
+            }
+            this.setState({
+                comics: [...this.state.comics, ...data.results],
+                loading: false
+            })
+        } catch (e) {
+
+        }
+
     }
 
     //Apply regex to find the year of origin from title string
@@ -84,10 +122,10 @@ class ComicList extends React.Component {
 
     render() {
         return (
-            <ComicListStyled >
+            <ComicListStyled onScroll={this.handleScroll}>
                 {
                     this.state.comics.map(comic => (
-                        <ComicItem key={comic.name || comic.title}>
+                        <ComicItem key={comic.id}>
                             <span>{comic.name || comic.title}</span>
                             {comic.thumbnail &&
                                 <img src={comic.thumbnail.path + "/portrait_small." + comic.thumbnail.extension} alt="hero thumbnail"></img>
@@ -95,9 +133,12 @@ class ComicList extends React.Component {
                         </ComicItem>
                     ))
 
+
                 }
-                {this.state.comics.length === 0 && <li>There is no comics registered from this super-hero</li>}
-            </ ComicListStyled>
+                {!this.state.loading && this.state.noMoreComics && <li style={{ 'textAlign': 'center' }}>There is no more comics...</li>}
+                {this.state.loading && <li><Loader></Loader></li>}
+                {!this.state.loading && this.state.comics.length === 0 && !this.state.noMoreComics && <li>There is no comics registered from this super-hero</li>}
+            </ ComicListStyled >
         )
     }
 
