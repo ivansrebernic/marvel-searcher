@@ -1,3 +1,16 @@
+Marvel Character Searcher
+
+Usage:
+You can search characters through the searchbox by name ocurrence and comic presence, keep in mind that when you search by comic, the name must match the title and the issue number, e.g The amazing spider-man #33 || The amazing spider-man %2333 (if search by url, %23 for #)
+ 
+You can also search multiple characters by using the URL and adding /?character=[NAME1]&character=[NAME2]...
+if you want to search a character by comic presence you use comic=[COMIC]
+By combining both you get only the characters in the query that appeared in the comic specified
+
+
+
+
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
