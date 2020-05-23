@@ -73,33 +73,30 @@ class Characters extends React.Component {
       }
     }
   }
-
+  parseURLQuery(query) {
+    let charactersQuery = query.character;
+    let comicsQuery = query.comic;
+    if (!charactersQuery) {
+      charactersQuery = []
+    }
+    if (!comicsQuery) {
+      comicsQuery = []
+    }
+    if (typeof charactersQuery == 'string') {
+      charactersQuery = [charactersQuery]
+    }
+    if (typeof comicsQuery == 'string') {
+      comicsQuery = [comicsQuery]
+    }
+    charactersInQuery = charactersQuery
+    comicsInQuery = comicsQuery
+  }
   componentDidMount() {
     //If the components mounts and there is a query in the url, then search by url
     if (this.props.location.search) {
       urlQuery = true;
       const query = qs.parse(this.props.location.search)
-      let charactersQuery = query.character;
-      let comicsQuery = query.comic;
-      if (!charactersQuery) {
-        charactersQuery = []
-      }
-      if (!comicsQuery) {
-        comicsQuery = []
-      }
-      if (typeof charactersQuery == 'string') {
-        charactersQuery = [charactersQuery]
-      }
-      if (typeof comicsQuery == 'string') {
-        comicsQuery = [comicsQuery]
-      }
-
-      charactersInQuery = charactersQuery
-      comicsInQuery = comicsQuery
-
-
-      console.log(charactersInQuery, comicsInQuery)
-
+      this.parseURLQuery(query)
       this.fetchCharacters(charactersInQuery, comicsInQuery)
     } else {
       //if there is no query in url, just fetch a random character with a random offset
@@ -131,8 +128,11 @@ class Characters extends React.Component {
         totalResults = await this.fetchCharactersFromComics(comics, characters)
       } else {
         //If the search is not done through url, find the characters separately
+
+        //Fetch the characters
         charactersResults = await this.fetchCharactersByName(characters)
         totalResults = [...totalResults, ...charactersResults]
+        //Fetch the comics
         comicsResults = await this.fetchComics(comics)
         let comicsIDList = []
         //Marvel's api only accepts sets of 10 id
