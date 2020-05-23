@@ -20,7 +20,7 @@ const CharacterCardStyled = styled.div`
     transition: 0.3s ease-in;
     h1{
 
-        color: black;
+
         -webkit-text-fill-color: white; /* Will override color (regardless of order) */
         -webkit-text-stroke-width: 1px;
         -webkit-text-stroke-color: black;

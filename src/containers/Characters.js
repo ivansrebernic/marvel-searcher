@@ -1,9 +1,10 @@
 import React from 'react'
-import styled, { ThemeProvider } from 'styled-components'
+import styled from 'styled-components'
 import Loader from '../components/Loader'
 import ModalCharacterInfo from '../components/ModalCharacterInfo'
 import CharacterCard from '../components/CharacterCard'
 import NavBar from '../components/NavBar'
+import API from '../api'
 import qs from 'query-string'
 import _ from 'lodash'
 
@@ -20,9 +21,8 @@ import _ from 'lodash'
 
 
 
-
+//Helper variables
 let urlQuery = false;
-let etag = ""
 let offset = 0
 let charactersInQuery = []
 let comicsInQuery = []
@@ -43,8 +43,6 @@ const StyledCharacters = styled.div`
 const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c739d3e46cefdb021c410ddefe5e"
 
 class Characters extends React.Component {
-
-
   constructor(props) {
     super(props)
     //console.log(props.location.search)
@@ -62,9 +60,10 @@ class Characters extends React.Component {
     this.handleOpenModal = this.handleOpenModal.bind(this)
     this.setQuery = this.setQuery.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
-
   }
+
   handleScroll() {
+    //When the user scrolls to the bottom of the page, fetch more characters
     if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
     if (!this.state.noMoreResults && !this.state.fetching) {
       if (urlQuery) {
@@ -72,7 +71,6 @@ class Characters extends React.Component {
       } else {
         this.fetchCharacters(this.state.query, this.state.query)
       }
-
     }
   }
 
@@ -103,9 +101,6 @@ class Characters extends React.Component {
       console.log(charactersInQuery, comicsInQuery)
 
       this.fetchCharacters(charactersInQuery, comicsInQuery)
-      //Because we want to have a different behaviour when searching by url, 
-      //we'll use another method for the search if the query possess multiple parameters, 
-      //if not, the we'll use a simple searchbar search functionality
     } else {
       //if there is no query in url, just fetch a random character with a random offset
       this.fetchRandom();
@@ -117,23 +112,25 @@ class Characters extends React.Component {
     window.removeEventListener('scroll', this.handleScroll)
   }
   fetchCharacters = async (characters, comics) => {
+    //Fetch characters by name and by the comics in which they appear
     try {
       this.setState({ fetching: true })
       let charactersResults = []
       let comicsResults = []
-      let charactersFromComics = []
       let totalResults = []
 
+      //Checking and converting the input
       if (typeof characters === "string") {
         characters = [characters]
       }
       if (typeof comics === "string") {
         comics = [comics]
       }
-
-      if (characters.length > 0 && comics.length > 0 && urlQuery) {
+      //If the search is done through the url, then search by the intersection of the characters and the characters that appear in comics 
+      if (urlQuery && characters.length > 0 && comics.length > 0) {
         totalResults = await this.fetchCharactersFromComics(comics, characters)
       } else {
+        //If the search is not done through url, find the characters separately
         charactersResults = await this.fetchCharactersByName(characters)
         totalResults = [...totalResults, ...charactersResults]
         comicsResults = await this.fetchComics(comics)
@@ -144,36 +141,33 @@ class Characters extends React.Component {
             comicsIDList.push(comic.id)
           })
         })
-
+        //If there are ocurrences with the comics in the query and the ocurrences are less than 10, search the characters that appear in those comics
         if (comicsIDList.length > 0 && comicsIDList.length < 10) {
           let comicsIDString = _.join(comicsIDList, ',')
           const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDString !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
           const { data } = await response.json()
-
           totalResults = [...totalResults, ...data.results]
         }
-
       }
-
-
+      //Remove duplicates
       totalResults = _.uniqBy(totalResults, 'id')
 
-
-
-      this.setState({ results: [...this.state.results, ...totalResults] })
-      this.setState({ fetching: false })
-
+      this.setState({
+        results: [...this.state.results, ...totalResults],
+        fetching: false
+      })
     } catch (error) {
-
+      console.log(error)
+      this.setState({ error: true })
     }
   }
-
   fetchComics = async (comics) => {
     try {
       let promisesComics = []
-      //First get the comics matching entirely by name and not by how the comic name starts
+      //First get the comics matching entirely by name and not by how the comic name starts to make the response more concise
       comics.forEach(comic => {
         let issueNumber = comic.match(/(#)([0-9])([0-9])?([0-9])?/g)
+        //Match by issue number included in the query
         if (issueNumber) {
           comic = comic.replace(issueNumber, '')
           issueNumber = issueNumber[0].substr(1)
@@ -185,11 +179,11 @@ class Characters extends React.Component {
       return comicsResults
     } catch (error) {
       console.log(error)
+      this.setState({ error: true })
     }
-
   }
   fetchCharactersByName = async (characters) => {
-
+    //Search characters were name starts with the query
     let promises = []
     let results = [];
     let promisesResults;
@@ -206,19 +200,16 @@ class Characters extends React.Component {
     });
     promisesResults = await Promise.all(promises)
 
-
+    //flag for registering when there is no more results
     let flag = false;
-
     promisesResults.forEach(promiseResults => {
-
       //If the response came with a full container
       if (promiseResults.data.count === promiseResults.data.limit) {
-
         flag = true;
         //Add offset for consecuent searches
         offset = offset + promiseResults.data.limit;
       } else {
-
+        //if the container came not full, then remove the character from the search so we dont include him in the next request
         charactersInQuery.splice(charactersInQuery.indexOf(promiseResults.character), 1)
       }
       results = [...results, ...promiseResults.data.results]
@@ -234,14 +225,12 @@ class Characters extends React.Component {
 
       let promisesComics = []
       //First get the comics matching entirely by name and not by how the comic name starts
-
       comics.forEach(comic => {
         let issueNumber = comic.match(/(#)([0-9])([0-9])?([0-9])?/g)
         if (issueNumber) {
           comic = comic.replace(issueNumber, '')
           issueNumber = issueNumber[0].substr(1)
         }
-
         promisesComics.push(fetch(`https://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
           .then(response => { return response.json() }))
       })
@@ -253,7 +242,6 @@ class Characters extends React.Component {
       let tempComics = []
       comicsResults.forEach(result => {
         tempComics = [...tempComics, result.data.results].flat()
-
         result.data.results.forEach(comic => {
           if (comic.characters.available > 0) {
             promisesCharacters.push(fetch(`https://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
@@ -267,27 +255,17 @@ class Characters extends React.Component {
         })
       })
       let charactersResults = await Promise.all(promisesCharacters)
-
-
-      //Add all the results of the characters into one array and remove duplicates
+      //Add all the results of the characters into one array
       let totalCharacters = []
-
-
-
       charactersResults.forEach(result => {
         //Delete the current comics in the result
         result.data.results.forEach(character => {
           character.comics.items = []
         })
-
-
-
         //Attach the comics in the character
         result.data.results.forEach(character => {
-
           const newComic = _.find(tempComics, { 'id': result.comic })
           const newCharacter = _.find(totalCharacters, { 'id': character.id })
-
           if (!newCharacter) {
             character.comics.items.push(newComic)
             totalCharacters.push(character)
@@ -298,12 +276,9 @@ class Characters extends React.Component {
       })
       //Remove the characters that were not specified in the query
       totalCharacters = _.filter(totalCharacters, function (o) {
-
         return _.includes(characters, o.name.toLowerCase())
       })
       //Finally return the characters
-
-      console.log(totalCharacters)
       return totalCharacters
 
     } catch (error) {
@@ -313,13 +288,10 @@ class Characters extends React.Component {
   fetchRandom = async () => {
     try {
       this.setState({ loading: true })
-      //Asumimos que la busqueda inicial tendra por lo menos 50 paginas de resultados de las cuales obtendremos nuestro personaje random
-      const randomPage = () => {
-        return Math.floor(Math.random() * 50)
-      }
-      const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
-      const { data } = await response.json();
-      //Elegimos aleatoriamente un personaje de todos los de la pagina
+
+      const data = await API.fetchRandomCharacter()
+
+      //set a random offset
       const randomCharacter = () => {
         return Math.floor(Math.random() * data.count)
       }
@@ -340,7 +312,6 @@ class Characters extends React.Component {
     if (query === "") {
       this.fetchRandom()
     } else {
-
       offset = 0;
       urlQuery = false
       this.setState({ noMoreResults: false })
@@ -369,16 +340,13 @@ class Characters extends React.Component {
         <NavBar handleQuery={this.setQuery} />
         < StyledCharacters >
           {this.state.results.map(character => (
-
             <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
-
           <ModalCharacterInfo theme={this.props.theme} character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
-
-
         </StyledCharacters>}
         {this.state.fetching && <Loader></Loader>}
-        {this.state.noMoreResults && <h4 style={{ textAlign: "center" }}>No hay mas resultados</h4>}
+        {this.state.noMoreResults && <h4 style={{ textAlign: "center" }}>There is no more results</h4>}
+        {this.state.error && <h4 style={{ textAlign: "center" }}>There has been an error with the query</h4>}
       </div>
 
 
