@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Characters/> Characters: renders correctly 1`] = `
+<div>
+  <NavBar
+    handleQuery={[Function]}
+  />
+  <styled.div>
+    <ModalCharacterInfo
+      character=""
+      onClose={[Function]}
+    />
+  </styled.div>
+</div>
+`;

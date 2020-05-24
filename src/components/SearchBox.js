@@ -55,6 +55,7 @@ function SearchBox(props) {
     const addQueryToFavorites = () => {
         if (query !== "" && !favorites.includes(query)) {
             setFavorites([...favorites, query])
+            //Add to localstoarge
             ls.set('favorites', [...favorites, query])
         }
 
@@ -99,7 +100,6 @@ function SearchBox(props) {
             <SearchIcon src={SearchIconPNG} />
             <SearchInput handleQuery={handleQueryInput} >{query}</SearchInput>
             {!collapsed && favoritesList}
-
             <FavoriteButton isFavorite={favorites.includes(query)} onFavorite={addQueryToFavorites} onUnfavorite={removeQueryFromFavorites} />
         </SearchBoxStyled >
     )

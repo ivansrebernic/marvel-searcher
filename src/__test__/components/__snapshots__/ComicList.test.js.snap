@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<ComicList> Renders correctly 1`] = `
+<styled.ul
+  onScroll={[Function]}
+>
+  <li>
+    <Loader />
+  </li>
+</styled.ul>
+`;

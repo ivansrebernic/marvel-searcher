@@ -19,7 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --verbose=false --silent=false",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -47,5 +47,10 @@
   },
   "moduleNameMapper": {
     "\\.js": "<rootDir>/src/__mocks__/styleMock.js"
+  },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }

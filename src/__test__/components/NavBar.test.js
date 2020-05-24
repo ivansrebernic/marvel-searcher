@@ -9,6 +9,6 @@ describe('</NavBar>', () => {
         wrapper = shallow(<NavBar></NavBar>)
     });
     test('Render: </NavBar>', () => {
-        expect(wrapper).toHaveLength(1)
+        expect(wrapper).toMatchSnapshot()
     });
 })

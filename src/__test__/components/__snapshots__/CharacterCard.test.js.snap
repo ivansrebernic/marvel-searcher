@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<CharacterCard/> Rendering CharacterCard 1`] = `
+<styled.div
+  character={
+    Object {
+      "name": "super hero name",
+    }
+  }
+  onClick={[Function]}
+>
+  <Styled(FavoriteButton)
+    isFavorite={false}
+    onFavorite={[Function]}
+    onUnfavorite={[Function]}
+  />
+  <h1>
+    super hero name
+  </h1>
+</styled.div>
+`;

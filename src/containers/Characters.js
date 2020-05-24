@@ -333,6 +333,7 @@ class Characters extends React.Component {
 
   render() {
     return (
+
       <div>
         <NavBar handleQuery={this.setQuery} />
         < StyledCharacters >

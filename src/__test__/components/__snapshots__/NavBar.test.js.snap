@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`</NavBar> Render: </NavBar> 1`] = `
+<styled.nav>
+  <styled.span />
+  <SearchBox />
+</styled.nav>
+`;

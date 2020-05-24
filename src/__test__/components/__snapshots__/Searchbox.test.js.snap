@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<Searchbox/> Renders correctly 1`] = `
+<styled.form
+  onBlur={[Function]}
+  onFocus={[Function]}
+  onSubmit={[Function]}
+  tabIndex="0"
+>
+  <styled.img
+    src="search.png"
+  />
+  <SearchInput
+    handleQuery={[Function]}
+  />
+  <FavoritesList />
+  <FavoriteButton
+    isFavorite={false}
+    onFavorite={[Function]}
+    onUnfavorite={[Function]}
+  />
+</styled.form>
+`;

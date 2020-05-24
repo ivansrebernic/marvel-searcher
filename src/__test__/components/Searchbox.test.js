@@ -11,6 +11,7 @@ import { act } from 'react-test-renderer'
 describe('<Searchbox/>', () => {
     it('Renders correctly', () => {
         const wrapper = shallow(<Searchbox></Searchbox>)
-        expect(wrapper).toHaveLength(1)
-    })
+        expect(wrapper).toMatchSnapshot()
+    });
+
 })

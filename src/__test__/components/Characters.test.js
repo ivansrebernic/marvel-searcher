@@ -15,7 +15,7 @@ describe('<Characters/>', () => {
         const wrapper = shallow(
             <Characters location={{ search: '' }}></Characters>
         );
-        expect(wrapper).toHaveLength(1)
+        expect(wrapper).toMatchSnapshot()
     });
 
 })

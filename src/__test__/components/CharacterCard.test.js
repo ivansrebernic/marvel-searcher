@@ -21,7 +21,7 @@ describe('<CharacterCard/>', () => {
             <ProviderMock>
                 <CharacterCard ></CharacterCard>
             </ProviderMock>)
-        expect(container.length).toEqual(1)
+        expect(wrapper).toMatchSnapshot()
     });
     test('Clicking on CharacterCard', () => {
 
