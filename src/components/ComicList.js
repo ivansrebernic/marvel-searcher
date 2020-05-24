@@ -12,10 +12,10 @@ const ComicListStyled = styled.ul`
     overflow:hidden;
     overflow-y:scroll;
     li:nth-child(2n){
-        background-color:#F7F8FA;
+        background-color:${props => props.theme.main.listitema};
     }
     li:nth-child(2n+1){
-        background-color:white;
+        background-color:${props => props.theme.main.listitemb};
     }
 
     @media (max-width: 768px) {

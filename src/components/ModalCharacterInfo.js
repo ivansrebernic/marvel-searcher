@@ -19,13 +19,10 @@ const ModalCharacterInfoStyled = styled.div`
 
 `
 const CharacterInfo = styled.div`
-
-
     display:flex;
-
     flex-direction:column;
-
     background-color: ${props => props.theme.main.modal};
+    color:${props => props.theme.main.text};
     img{
         align-self:center;
         width:100%;
@@ -37,31 +34,37 @@ const CharacterInfo = styled.div`
             margin:0;
         }
         margin:10px;
-
     }
-
-
-
-    @media (max-width: 768px) {
-
-
-      }
-
+`
+const StyledButton = styled.button`
+    background-color:${props => props.theme.main.button};
+    border-radius:10px;
+    border: 1px solid black;
+    padding: 0.5rem;
+    transition: 0.1s ease-in;
+    &:hover{
+        cursor:pointer;
+    }
 `
 
 
 function ModalCharacterInfo(props) {
-
-    const [section, setSection] = React.useState('info')
-
+    const [section, setSection] = React.useState('Info')
     React.useEffect(() => {
-
         return () => {
-            if (section === 'comics')
-                setSection('info')
+            if (section === 'Comics')
+                setSection('Info')
         }
     });
+    const changeSection = () => {
 
+        if (section === 'Info') {
+            setSection('Comics')
+        } else {
+            setSection('Info')
+        }
+
+    }
     if (!props.isOpen && !props.character) {
         return null
     };
@@ -72,10 +75,10 @@ function ModalCharacterInfo(props) {
         <Modal onClose={props.onClose}>
             <ModalCharacterInfoStyled>
                 <div>
-                    <button onClick={() => { setSection('info') }}>Info</button>
-                    <button onClick={() => { setSection('comics') }}> Comics</button>
+                    <StyledButton onClick={changeSection}>{section}</StyledButton>
+
                 </div>
-                {section === 'info' &&
+                {section === 'Info' &&
                     <CharacterInfo>
                         <img src={props.character.thumbnail.path + '/' + imageSize + '.' + props.character.thumbnail.extension} alt="Super hero"></img>
                         <div>
@@ -84,7 +87,7 @@ function ModalCharacterInfo(props) {
                             <p>{props.character.description}</p>
                         </div>
                     </CharacterInfo>}
-                {section === 'comics' &&
+                {section === 'Comics' &&
                     <ComicList comics={props.character.comics}>
 
                     </ComicList>}
