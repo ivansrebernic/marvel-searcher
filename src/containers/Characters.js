@@ -343,7 +343,7 @@ class Characters extends React.Component {
           <ModalCharacterInfo theme={this.props.theme} character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
         </StyledCharacters>
         {this.state.fetching && <Loader></Loader>}
-        {this.state.noMoreResults && !this.state.fetching && <h4 style={{ textAlign: "center" }}>There is no more results</h4>}
+        {this.state.noMoreResults && !this.state.fetching && !this.state.loading && <h4 style={{ textAlign: "center" }}>There is no more results</h4>}
         {this.state.error && <h4 style={{ textAlign: "center" }}>There has been an error with the query</h4>}
       </div>
     )
