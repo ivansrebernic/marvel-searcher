@@ -45,7 +45,6 @@ const credentials = "?&ts=1&apikey=d267dc8180768e976a2442235e0617f6&hash=0ad4c73
 class Characters extends React.Component {
   constructor(props) {
     super(props)
-    //console.log(props.location.search)
     this.state = {
       query: "",
       character: '',
@@ -236,7 +235,7 @@ class Characters extends React.Component {
       })
 
       let comicsResults = await Promise.all(promisesComics)
-      console.log(comicsResults)
+
       //Once we get all the results, proceed to get the characters that are in the comics provided
       let promisesCharacters = []
       let tempComics = []
@@ -296,16 +295,15 @@ class Characters extends React.Component {
         return Math.floor(Math.random() * data.count)
       }
       this.setState((state, props) => ({
-        results: [data.results[randomCharacter()]]
+        results: [data.results[randomCharacter()]],
+        loading: false
       }))
-      this.setState({ loading: false })
     } catch (error) {
       this.setState({
         loading: false,
-      })
-      this.setState({
         error: error
       })
+
     }
   }
   setQuery(query) {
@@ -335,26 +333,19 @@ class Characters extends React.Component {
 
   render() {
     return (
-
       <div>
         <NavBar handleQuery={this.setQuery} />
         < StyledCharacters >
           {this.state.results.map(character => (
-            <CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
+            < CharacterCard key={character.id} character={character} onOpenModal={this.handleOpenModal} />
           ))}
           <ModalCharacterInfo theme={this.props.theme} character={this.state.character} isOpen={this.state.modalIsOpen} onClose={this.handleCloseModal} />
-        </StyledCharacters>}
+        </StyledCharacters>
         {this.state.fetching && <Loader></Loader>}
-        {this.state.noMoreResults && <h4 style={{ textAlign: "center" }}>There is no more results</h4>}
+        {this.state.noMoreResults && !this.state.fetching && <h4 style={{ textAlign: "center" }}>There is no more results</h4>}
         {this.state.error && <h4 style={{ textAlign: "center" }}>There has been an error with the query</h4>}
       </div>
-
-
     )
   }
-
 }
-
-
-
 export default Characters

@@ -46,12 +46,11 @@ const ComicItem = styled.li`
 
 `
 let offset = 0;
-let collectionURI = ""
 class ComicList extends React.Component {
 
     constructor(props) {
         super(props)
-        collectionURI = props.comics.collectionURI
+
         this.state = {
             comics: [],
             loading: false,
@@ -66,13 +65,10 @@ class ComicList extends React.Component {
         offset = 0;
         document.addEventListener('scroll', this.trackScrolling);
         this.loadComics()
-
-
     }
     handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
         if (bottom && !this.state.noMoreComics && !this.state.loading) {
-            console.log(this.state.comics)
             this.loadComics()
         }
     }
@@ -81,10 +77,9 @@ class ComicList extends React.Component {
 
         try {
             this.setState({ loading: true })
-            const response = await fetch(this.props.comics.collectionURI + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified" + "&offset=" + offset)
+            const response = await fetch(this.props.comics.collectionURI + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified&offset=" + offset)
             const { data } = await response.json()
             offset += data.count
-            console.log(data, offset)
             if (data.count < data.limit && data.offset > 0) {
                 this.setState({ noMoreComics: true })
             }

@@ -10,9 +10,7 @@ export default function Routes() {
         <Router>
 
             <Switch>
-                {/* Using the `component` prop */}
                 <Route path="/" component={Characters} />
-
             </Switch>
         </Router>
     )
