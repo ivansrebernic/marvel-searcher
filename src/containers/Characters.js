@@ -142,7 +142,7 @@ class Characters extends React.Component {
         //If there are ocurrences with the comics in the query and the ocurrences are less than 10, search the characters that appear in those comics
         if (comicsIDList.length > 0 && comicsIDList.length < 10) {
           let comicsIDString = _.join(comicsIDList, ',')
-          const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDString !== "" ? "comics=" + comicsIDList : ""}&offset=${offset}} `)
+          const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&${comicsIDString !== "" ? "comics=" + comicsIDList : ""}&offset=${offset} `)
           const { data } = await response.json()
           totalResults = [...totalResults, ...data.results]
         }
@@ -229,7 +229,7 @@ class Characters extends React.Component {
           comic = comic.replace(issueNumber, '')
           issueNumber = issueNumber[0].substr(1)
         }
-        promisesComics.push(fetch(`https://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}}`)
+        promisesComics.push(fetch(`https://gateway.marvel.com/v1/public/comics${credentials}&offset=${offset}&title=${comic}&${issueNumber ? 'issueNumber=' + Number(issueNumber) : ''}`)
           .then(response => { return response.json() }))
       })
 
@@ -242,7 +242,7 @@ class Characters extends React.Component {
         tempComics = [...tempComics, result.data.results].flat()
         result.data.results.forEach(comic => {
           if (comic.characters.available > 0) {
-            promisesCharacters.push(fetch(`https://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}}`)
+            promisesCharacters.push(fetch(`https://gateway.marvel.com/v1/public/comics/${comic.id}/characters${credentials}`)
               .then(response => {
                 return response.json()
               }).then((data) => {

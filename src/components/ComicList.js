@@ -64,8 +64,12 @@ class ComicList extends React.Component {
 
     componentDidMount() {
         offset = 0;
+        console.log(this.props.comics)
         document.addEventListener('scroll', this.trackScrolling);
-        this.loadComics()
+        if (!this.props.comics)
+            this.loadComics()
+        else
+            this.setState({ comics: this.props.comics.items })
     }
     componentWillUnmount() {
         window.removeEventListener('scroll', this.trackScrolling)
