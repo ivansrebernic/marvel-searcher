@@ -96,7 +96,7 @@ function SearchBox(props) {
             }
         </FavoritesList>)
     return (
-        <SearchBoxStyled onFocus={handleCollapse} onBlur={collapseFavoritesList} tabIndex="0" onSubmit={e => submitQuery(e)} >
+        <SearchBoxStyled onFocus={handleCollapse} onBlur={collapseFavoritesList} onSubmit={e => submitQuery(e)} >
             <SearchIcon src={SearchIconPNG} />
             <SearchInput handleQuery={handleQueryInput} >{query}</SearchInput>
             {!collapsed && favoritesList}

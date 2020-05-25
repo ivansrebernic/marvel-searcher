@@ -75,7 +75,7 @@ function ModalCharacterInfo(props) {
         <Modal onClose={props.onClose}>
             <ModalCharacterInfoStyled>
                 <div>
-                    <StyledButton onClick={changeSection}>{section}</StyledButton>
+                    <StyledButton onClick={changeSection}>{section === 'Info' ? 'Ver comics' : 'Ver info'}</StyledButton>
 
                 </div>
                 {section === 'Info' &&
