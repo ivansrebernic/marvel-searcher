@@ -54,7 +54,8 @@ class ComicList extends React.Component {
         this.state = {
             comics: [],
             loading: false,
-            noMoreComics: false
+            noMoreComics: false,
+            error: false
         }
         this.extractYearFromString = this.extractYearFromString.bind(this)
         this.loadComics = this.loadComics.bind(this)
@@ -80,10 +81,9 @@ class ComicList extends React.Component {
 
         try {
             this.setState({ loading: true })
-            console.log(this.props.comics)
-
             const req = this.props.comics.collectionURI.slice(4)
-            const response = await fetch('https' + req + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified&offset=" + offset)
+            console.log(this.props.comics)
+            const response = await fetch('https' + req + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=-onsaleDate&offset=" + offset)
             const { data } = await response.json()
             offset += data.count
             if (data.count < data.limit && data.offset > 0) {
@@ -94,7 +94,10 @@ class ComicList extends React.Component {
                 loading: false
             })
         } catch (e) {
-
+            this.setState({
+                error: true,
+                loading: false
+            })
         }
 
     }
