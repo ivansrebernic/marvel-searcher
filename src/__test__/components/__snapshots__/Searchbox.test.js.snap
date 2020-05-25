@@ -5,7 +5,6 @@ exports[`<Searchbox/> Renders correctly 1`] = `
   onBlur={[Function]}
   onFocus={[Function]}
   onSubmit={[Function]}
-  tabIndex="0"
 >
   <styled.img
     src="search.png"

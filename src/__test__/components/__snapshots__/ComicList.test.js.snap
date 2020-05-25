@@ -5,7 +5,7 @@ exports[`<ComicList> Renders correctly 1`] = `
   onScroll={[Function]}
 >
   <li>
-    <Loader />
+    There is no comics registered from this super-hero
   </li>
 </styled.ul>
 `;

@@ -64,7 +64,6 @@ class ComicList extends React.Component {
 
     componentDidMount() {
         offset = 0;
-        console.log(this.props.comics)
         document.addEventListener('scroll', this.trackScrolling);
         if (!this.props.comics)
             this.loadComics()
