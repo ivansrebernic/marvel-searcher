@@ -66,6 +66,9 @@ class ComicList extends React.Component {
         document.addEventListener('scroll', this.trackScrolling);
         this.loadComics()
     }
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.trackScrolling)
+    }
     handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop === e.target.clientHeight;
         if (bottom && !this.state.noMoreComics && !this.state.loading) {
@@ -77,7 +80,10 @@ class ComicList extends React.Component {
 
         try {
             this.setState({ loading: true })
-            const response = await fetch(this.props.comics.collectionURI + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified&offset=" + offset)
+            console.log(this.props.comics)
+
+            const req = this.props.comics.collectionURI.slice(4)
+            const response = await fetch('https' + req + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=modified&offset=" + offset)
             const { data } = await response.json()
             offset += data.count
             if (data.count < data.limit && data.offset > 0) {
