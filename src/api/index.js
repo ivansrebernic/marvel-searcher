@@ -9,7 +9,7 @@ export default {
         const randomPage = () => {
             return Math.floor(Math.random() * 1300)
         }
-        const response = await fetch(`https://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
+        const response = await fetch(`http://gateway.marvel.com/v1/public/characters${credentials}&offset=${randomPage()}`)
         const { data } = await response.json();
 
 
@@ -18,7 +18,7 @@ export default {
     fetchCharacterByName: async (character, offset) => {
 
         return new Promise(resolve => {
-            const response = fetch(`https://gateway.marvel.com/v1/public/characters${credentials}${(character === "") ? "" : "&nameStartsWith=" + character}&offset=${offset}`)
+            const response = fetch(`http://gateway.marvel.com/v1/public/characters${credentials}${(character === "") ? "" : "&nameStartsWith=" + character}&offset=${offset}`)
             const { data } = response.json();
             resolve(data)
         })
