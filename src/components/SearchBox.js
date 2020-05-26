@@ -24,11 +24,15 @@ const SearchBoxStyled = styled.form`
     border-right: 1px solid lightgray;
     border-left: 1px solid lightgray;
 `
-const SearchIcon = styled.img`
+const SearchButton = styled.a`
     align-self:center;
     margin-right:5px;
     width:24px;
     height:24px;
+    img{
+        width:24px;
+        height:24px;
+    }
 `
 
 
@@ -96,8 +100,8 @@ function SearchBox(props) {
             }
         </FavoritesList>)
     return (
-        <SearchBoxStyled onFocus={handleCollapse} onBlur={collapseFavoritesList} onSubmit={e => submitQuery(e)} >
-            <SearchIcon src={SearchIconPNG} />
+        <SearchBoxStyled onFocus={handleCollapse} onBlur={collapseFavoritesList} tabIndex="0" onSubmit={e => submitQuery(e)} >
+            <SearchButton onClick={e => submitQuery(e)}><img src={SearchIconPNG} alt="search button"></img> </SearchButton>
             <SearchInput handleQuery={handleQueryInput} >{query}</SearchInput>
             {!collapsed && favoritesList}
             <FavoriteButton isFavorite={favorites.includes(query)} onFavorite={addQueryToFavorites} onUnfavorite={removeQueryFromFavorites} />
