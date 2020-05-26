@@ -85,7 +85,7 @@ class ComicList extends React.Component {
         try {
             this.setState({ loading: true })
             const req = this.props.comics.collectionURI.slice(4)
-            console.log(this.props.comics)
+
             const response = await fetch('https' + req + "?apikey=" + process.env.REACT_APP_PUBLIC_KEY + "&hash=" + process.env.REACT_APP_HASH + "&ts=" + process.env.REACT_APP_TS + "&orderBy=-onsaleDate&offset=" + offset)
             const { data } = await response.json()
             offset += data.count

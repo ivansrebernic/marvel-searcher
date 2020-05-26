@@ -14,4 +14,5 @@ describe('<Searchbox/>', () => {
         expect(wrapper).toMatchSnapshot()
     });
 
+
 })
