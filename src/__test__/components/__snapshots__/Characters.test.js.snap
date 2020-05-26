@@ -11,5 +11,14 @@ exports[`<Characters/> Characters: renders correctly 1`] = `
       onClose={[Function]}
     />
   </styled.div>
+  <h4
+    style={
+      Object {
+        "textAlign": "center",
+      }
+    }
+  >
+    There has been an error with the query
+  </h4>
 </div>
 `;
